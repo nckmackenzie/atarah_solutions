@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -64,6 +65,68 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground h-screen font-inter;
+  }
+}
+
+@layer components {
+  .loader {
+    width: 45px;
+    aspect-ratio: 0.75;
+    --c: no-repeat linear-gradient(theme(colors.stone.800) 0 0);
+    background: var(--c) 0% 50%, var(--c) 50% 50%, var(--c) 100% 50%;
+    background-size: 20% 50%;
+    animation: loading 1s infinite linear;
+  }
+
+  @keyframes loading {
+    20% {
+      background-position: 0% 0%, 50% 50%, 100% 50%;
+    }
+    40% {
+      background-position: 0% 100%, 50% 0%, 100% 50%;
+    }
+    60% {
+      background-position: 0% 50%, 50% 100%, 100% 0%;
+    }
+    80% {
+      background-position: 0% 50%, 50% 50%, 100% 100%;
+    }
+  }
+
+  .icon {
+    @apply w-4 h-4;
+  }
+
+  .icon-muted {
+    @apply w-4 h-4 text-muted-foreground;
+  }
+
+  .delete-menu-item {
+    @apply relative w-full flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm text-destructive outline-none transition-colors hover:bg-secondary focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50;
+  }
+
+  .more-btn {
+    @apply border-none outline-none cursor-pointer;
+  }
+
+  .input {
+    @apply flex w-full h-10 px-3 py-2 text-sm border rounded-md border-input bg-background;
+  }
+
+  .y-spacing {
+    @apply space-y-4 sm:space-y-6;
+  }
+
+  .row-font {
+    @apply text-sm uppercase;
+  }
+
+  .form-grid {
+    @apply grid grid-cols-1 gap-4 md:grid-cols-12;
+  }
+
+  .form-col {
+    @apply col-span-full md:col-span-6;
   }
 }
