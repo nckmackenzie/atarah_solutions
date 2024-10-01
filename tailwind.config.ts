@@ -9,6 +9,9 @@ export default {
     './node_modules/@tremor/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
+    fontFamily: {
+      inter: ['Inter, sans-serif'],
+    },
     extend: {
       borderRadius: {
         lg: 'var(--radius)',
