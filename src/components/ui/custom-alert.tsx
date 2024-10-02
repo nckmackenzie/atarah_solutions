@@ -42,10 +42,10 @@ export { Alert };
 
 interface ErrorAlertProps {
   title?: string;
-  description: string;
+  error: string | string[];
 }
 
-export const ErrorAlert = ({ description, title }: ErrorAlertProps) => {
+export const ErrorAlert = ({ error, title }: ErrorAlertProps) => {
   return (
     <Alert variant="destructive" className="flex items-center gap-4">
       <div className="bg-rose-500 size-8 grid place-content-center rounded-full">
@@ -55,9 +55,7 @@ export const ErrorAlert = ({ description, title }: ErrorAlertProps) => {
         <h5 className="font-medium leading-none tracking-tight">
           {title || 'Error!!'}
         </h5>
-        <p className="text-xs [&_p]:leading-relaxed text-slate-600">
-          {description}
-        </p>
+        <p className="text-xs [&_p]:leading-relaxed text-slate-600">{error}</p>
       </div>
     </Alert>
   );
