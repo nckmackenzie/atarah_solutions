@@ -25,7 +25,7 @@ export function PageLoader({
       )}
     >
       <div className="flex flex-col items-center">
-        <Loader2Icon className="size-8 animate-spin text-rose-300" />
+        <Loader2Icon className="size-8 animate-spin text-primary" />
         <span className="text-sm text-muted-foreground">
           {loaderText || 'Please wait...'}
         </span>
@@ -37,7 +37,7 @@ export function PageLoader({
 export function BasicLoader() {
   return (
     <div className="flex flex-col items-center">
-      <Loader2Icon className="size-8 animate-spin text-rose-300" />
+      <Loader2Icon className="size-8 animate-spin text-primary" />
       <span className="text-sm text-muted-foreground">Please wait...</span>
     </div>
   );
