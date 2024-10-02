@@ -29,8 +29,8 @@ export const router = createBrowserRouter([
             <div>Home</div>
           </ContentWrapper>
         ),
-        ...adminRoutes,
       },
+      ...adminRoutes,
     ],
   },
 ]);
