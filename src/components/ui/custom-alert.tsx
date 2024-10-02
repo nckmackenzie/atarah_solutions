@@ -11,7 +11,7 @@ const alertVariants = cva(
       variant: {
         default: 'bg-background text-foreground',
         destructive:
-          'border-rose-200 bg-rose-100 dark:bg-rose-800 text-slate-950 dark:border-destructive dark:text-slate-50 [&>svg]:text-destructive',
+          'border-rose-200 bg-rose-100 dark:bg-rose-800 text-slate-950 dark:border-rose-900 dark:text-slate-50',
         success:
           'border-emerald-100/50 bg-emerald-100 dark:bg-emerald-800 text-slate-950 dark:text-emerald-100 ',
       },
@@ -55,7 +55,9 @@ export const ErrorAlert = ({ error, title }: ErrorAlertProps) => {
         <h5 className="font-medium leading-none tracking-tight">
           {title || 'Error!!'}
         </h5>
-        <p className="text-xs [&_p]:leading-relaxed text-slate-600">{error}</p>
+        <p className="text-xs [&_p]:leading-relaxed text-slate-600 dark:text-slate-300">
+          {error}
+        </p>
       </div>
     </Alert>
   );
