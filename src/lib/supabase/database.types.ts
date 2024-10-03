@@ -11,6 +11,7 @@ export type Database = {
     Tables: {
       clients: {
         Row: {
+          active: boolean
           address: string | null
           contact: string
           createdAt: string | null
@@ -22,6 +23,7 @@ export type Database = {
           taxPin: string | null
         }
         Insert: {
+          active?: boolean
           address?: string | null
           contact: string
           createdAt?: string | null
@@ -33,6 +35,7 @@ export type Database = {
           taxPin?: string | null
         }
         Update: {
+          active?: boolean
           address?: string | null
           contact?: string
           createdAt?: string | null
@@ -72,6 +75,207 @@ export type Database = {
         }
         Relationships: []
       }
+      invoice_details: {
+        Row: {
+          headerId: string
+          id: number
+          qty: number
+          rate: number
+          remarks: string | null
+          serviceId: string
+        }
+        Insert: {
+          headerId: string
+          id?: number
+          qty?: number
+          rate: number
+          remarks?: string | null
+          serviceId: string
+        }
+        Update: {
+          headerId?: string
+          id?: number
+          qty?: number
+          rate?: number
+          remarks?: string | null
+          serviceId?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_details_headerId_fkey"
+            columns: ["headerId"]
+            isOneToOne: false
+            referencedRelation: "invoice_headers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_details_serviceId_fkey"
+            columns: ["serviceId"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoice_headers: {
+        Row: {
+          clientId: string
+          createdAt: string
+          createdBy: string
+          exclusiveAmount: number
+          id: string
+          inclusiveAmount: number | null
+          invoiceDate: string
+          invoiceNo: number
+          vat: number
+          vatAmount: number
+          vatType: Database["public"]["Enums"]["vat_type"]
+        }
+        Insert: {
+          clientId: string
+          createdAt?: string
+          createdBy?: string
+          exclusiveAmount: number
+          id?: string
+          inclusiveAmount?: number | null
+          invoiceDate: string
+          invoiceNo: number
+          vat?: number
+          vatAmount?: number
+          vatType?: Database["public"]["Enums"]["vat_type"]
+        }
+        Update: {
+          clientId?: string
+          createdAt?: string
+          createdBy?: string
+          exclusiveAmount?: number
+          id?: string
+          inclusiveAmount?: number | null
+          invoiceDate?: string
+          invoiceNo?: number
+          vat?: number
+          vatAmount?: number
+          vatType?: Database["public"]["Enums"]["vat_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_headers_clientId_fkey"
+            columns: ["clientId"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoice_payments: {
+        Row: {
+          amount: number
+          createdAt: string
+          createdBy: string
+          id: string
+          invoiceId: string | null
+          paymentMethod: Database["public"]["Enums"]["payment_type"] | null
+          paymentReference: string | null
+          transacfionType:
+            | Database["public"]["Enums"]["invoice_payment_type"]
+            | null
+          transactionDate: string
+          transactionId: string | null
+        }
+        Insert: {
+          amount: number
+          createdAt?: string
+          createdBy?: string
+          id?: string
+          invoiceId?: string | null
+          paymentMethod?: Database["public"]["Enums"]["payment_type"] | null
+          paymentReference?: string | null
+          transacfionType?:
+            | Database["public"]["Enums"]["invoice_payment_type"]
+            | null
+          transactionDate: string
+          transactionId?: string | null
+        }
+        Update: {
+          amount?: number
+          createdAt?: string
+          createdBy?: string
+          id?: string
+          invoiceId?: string | null
+          paymentMethod?: Database["public"]["Enums"]["payment_type"] | null
+          paymentReference?: string | null
+          transacfionType?:
+            | Database["public"]["Enums"]["invoice_payment_type"]
+            | null
+          transactionDate?: string
+          transactionId?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_payments_invoiceId_fkey"
+            columns: ["invoiceId"]
+            isOneToOne: false
+            referencedRelation: "invoice_headers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          activated: boolean | null
+          active: boolean | null
+          contact: string | null
+          id: string
+          username: string | null
+        }
+        Insert: {
+          activated?: boolean | null
+          active?: boolean | null
+          contact?: string | null
+          id: string
+          username?: string | null
+        }
+        Update: {
+          activated?: boolean | null
+          active?: boolean | null
+          contact?: string | null
+          id?: string
+          username?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      services: {
+        Row: {
+          createdAt: string
+          description: string | null
+          id: string
+          serviceName: string
+          serviceRate: number
+        }
+        Insert: {
+          createdAt?: string
+          description?: string | null
+          id?: string
+          serviceName: string
+          serviceRate: number
+        }
+        Update: {
+          createdAt?: string
+          description?: string | null
+          id?: string
+          serviceName?: string
+          serviceRate?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -80,7 +284,9 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      invoice_payment_type: "opening_balance" | "debit" | "credit"
+      payment_type: "cash" | "mpesa" | "cheque" | "bank"
+      vat_type: "no_vat" | "inclusive" | "exclusive"
     }
     CompositeTypes: {
       [_ in never]: never
