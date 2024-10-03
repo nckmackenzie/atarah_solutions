@@ -20,7 +20,7 @@ export default function Sidebar() {
     queryFn: async () => {
       const { data, error } = await supabase.from('forms').select('*');
       if (error) throw new Error(error.message);
-      console.log(data);
+
       return data;
     },
     refetchInterval: false,
