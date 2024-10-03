@@ -62,7 +62,9 @@ function CreateNewButton({
 }: React.PropsWithChildren<{ href: string }>) {
   return (
     <Button asChild>
-      <Link to={href}>{children}</Link>
+      <Link to={href} className="space-x-2">
+        {children}
+      </Link>
     </Button>
   );
 }
