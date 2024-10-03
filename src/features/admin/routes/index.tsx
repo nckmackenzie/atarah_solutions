@@ -2,7 +2,10 @@ import { Suspense } from 'react';
 import { type RouteObject } from 'react-router-dom';
 
 import { PageLoader } from '@/components/ui/loaders';
-import { CustomerIndexPage } from '@/features/admin/routes/utils';
+import {
+  CustomerIndexPage,
+  CreateEditCustomerPage,
+} from '@/features/admin/routes/utils';
 
 export const adminRoutes: RouteObject[] = [
   {
@@ -13,6 +16,22 @@ export const adminRoutes: RouteObject[] = [
         element: (
           <Suspense fallback={<PageLoader />}>
             <CustomerIndexPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'customers/new',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <CreateEditCustomerPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'customers/edit/:id',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <CreateEditCustomerPage isEdit />
           </Suspense>
         ),
       },
