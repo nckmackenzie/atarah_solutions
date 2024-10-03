@@ -53,7 +53,7 @@ export function CustomAlertDialog({
           <AlertDialogAction
             onClick={handleAction}
             disabled={isPending}
-            className="bg-rose-500"
+            className="bg-rose-500 dark:bg-rose-800 text-slate-900 hover:bg-rose-600 dark:hover:bg-rose-900"
           >
             Continue
           </AlertDialogAction>
