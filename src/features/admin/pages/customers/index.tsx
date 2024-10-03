@@ -4,7 +4,7 @@ import ContentWrapper from '@/components/layout/content-wrapper';
 import { CreateNewButton } from '@/components/ui/button';
 import PageCard from '@/components/ui/page-card';
 import { ErrorAlert } from '@/components/ui/custom-alert';
-import ClientTable from '@/features/admin/components/client-table';
+import ClientTable from '@/features/admin/components/clients/client-table';
 import { TableSkeleton } from '@/components/ui/table-skeleton';
 
 import { useDocumentTitle } from '@/hooks/use-title';
