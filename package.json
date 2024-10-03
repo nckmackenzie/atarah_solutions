@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "types": "supabase gen types typescript --project-id wefpbumdeiohryzwxvuw > src/lib/supabase/database.types.ts"
+    "sb:types": "supabase gen types typescript --project-id wefpbumdeiohryzwxvuw > src/lib/supabase/database.types.ts"
   },
   "dependencies": {
     "@headlessui/react": "^2.1.8",
