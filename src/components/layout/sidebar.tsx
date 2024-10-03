@@ -18,7 +18,12 @@ export default function Sidebar() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['forms'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('forms').select('*');
+      const { data, error } = await supabase
+        .from('forms')
+        .select('*')
+        .order('moduleId', { ascending: true })
+        .order('menuOrder', { ascending: true })
+        .order('formName', { ascending: true });
       if (error) throw new Error(error.message);
 
       return data;
