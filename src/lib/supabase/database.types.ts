@@ -222,23 +222,23 @@ export type Database = {
       }
       profiles: {
         Row: {
-          activated: boolean | null
-          active: boolean | null
+          active: Database["public"]["Enums"]["user_status_type"] | null
           contact: string | null
+          email: string | null
           id: string
           username: string | null
         }
         Insert: {
-          activated?: boolean | null
-          active?: boolean | null
+          active?: Database["public"]["Enums"]["user_status_type"] | null
           contact?: string | null
+          email?: string | null
           id: string
           username?: string | null
         }
         Update: {
-          activated?: boolean | null
-          active?: boolean | null
+          active?: Database["public"]["Enums"]["user_status_type"] | null
           contact?: string | null
+          email?: string | null
           id?: string
           username?: string | null
         }
@@ -254,6 +254,7 @@ export type Database = {
       }
       services: {
         Row: {
+          active: boolean
           createdAt: string
           description: string | null
           id: string
@@ -261,6 +262,7 @@ export type Database = {
           serviceRate: number
         }
         Insert: {
+          active?: boolean
           createdAt?: string
           description?: string | null
           id?: string
@@ -268,6 +270,7 @@ export type Database = {
           serviceRate: number
         }
         Update: {
+          active?: boolean
           createdAt?: string
           description?: string | null
           id?: string
@@ -286,6 +289,7 @@ export type Database = {
     Enums: {
       invoice_payment_type: "opening_balance" | "debit" | "credit"
       payment_type: "cash" | "mpesa" | "cheque" | "bank"
+      user_status_type: "active" | "inactive" | "not_activated"
       vat_type: "no_vat" | "inclusive" | "exclusive"
     }
     CompositeTypes: {
