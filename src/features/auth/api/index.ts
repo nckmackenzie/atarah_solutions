@@ -9,6 +9,22 @@ export async function login(values: LoginFormValues) {
 
   if (error) throw new Error(error.message);
 
+  const { data: profileData, error: profileError } = await supabase
+    .from('profiles')
+    .select('active')
+    .eq('id', data.user.id)
+    .single();
+
+  if (profileError) throw new Error(profileError.message);
+
+  if (!profileData) throw new Error('Profile not found');
+
+  if (profileData.active === 'not_activated')
+    throw new Error('Your account has not been activated. Contact admin.');
+
+  if (profileData.active === 'inactive')
+    throw new Error('Your account has been deactivated. Contact admin.');
+
   return data;
 }
 
