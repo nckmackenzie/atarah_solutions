@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { LogOut, Moon, Sun } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { LogOut, Moon, Sun, User } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '../ui/button';
@@ -56,9 +56,11 @@ export default function UserNav() {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">
-              {user?.user_metadata?.fullName || 'Jane Doe'}
-            </p>
+            {user?.user_metadata?.fullName && (
+              <p className="text-sm font-medium leading-none">
+                {user?.user_metadata?.fullName || 'Jane Doe'}
+              </p>
+            )}
             {user?.email && (
               <p className="text-xs leading-none text-muted-foreground">
                 {user.email}
@@ -66,6 +68,13 @@ export default function UserNav() {
             )}
           </div>
         </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild className="cursor-pointer">
+          <Link className="w-full" to={'/profile'}>
+            <User className="w-4 h-4 mr-2" />
+            <span>Your Profile</span>
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
@@ -95,6 +104,7 @@ export default function UserNav() {
             </DropdownMenuSubContent>
           </DropdownMenuPortal>
         </DropdownMenuSub>
+        <DropdownMenuSeparator />
         <DropdownMenuItem
           className="hover:cursor-pointer"
           onClick={() => mutate()}
