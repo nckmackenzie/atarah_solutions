@@ -6,8 +6,10 @@ import { ErrorAlert } from '@/components/ui/custom-alert';
 
 import { usePageFetch } from '@/hooks/use-page-fetch';
 import { fetchUsers } from '@/features/admin//api/user';
+import { useDocumentTitle } from '@/hooks/use-title';
 
 export default function UsersIndex() {
+  useDocumentTitle('Users');
   const { data, isLoading, error } = usePageFetch('users', fetchUsers);
   return (
     <ContentWrapper>
