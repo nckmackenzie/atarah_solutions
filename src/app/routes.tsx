@@ -6,6 +6,7 @@ import ProtectedRoute from '@/components/ui/protected-route';
 import AppLayout from '@/components/layout/app-layout';
 import ContentWrapper from '@/components/layout/content-wrapper';
 import { adminRoutes } from '@/features/admin/routes';
+import ProfileIndexPage from '@/features/profile/pages';
 
 export const router = createBrowserRouter([
   {
@@ -29,6 +30,10 @@ export const router = createBrowserRouter([
             <div>Home</div>
           </ContentWrapper>
         ),
+      },
+      {
+        path: '/profile',
+        element: <ProfileIndexPage />,
       },
       ...adminRoutes,
     ],
