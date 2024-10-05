@@ -59,6 +59,7 @@ export default function InvoiceItems({
       <Button
         type="button"
         variant="secondary"
+        disabled={isPending}
         onClick={() =>
           append({
             serviceId: '',
@@ -99,13 +100,19 @@ export default function InvoiceItems({
           <FormGroup className="col-span-2">
             <Label>Qty</Label>
             <div className="space-y-1">
-              <Input {...form.register(`items.${index}.qty`)} />
+              <Input
+                {...form.register(`items.${index}.qty`)}
+                disabled={isPending}
+              />
             </div>
           </FormGroup>
           <FormGroup className="col-span-2">
             <Label>Rate</Label>
             <div className="space-y-1">
-              <Input {...form.register(`items.${index}.rate`)} />
+              <Input
+                {...form.register(`items.${index}.rate`)}
+                disabled={isPending}
+              />
             </div>
           </FormGroup>
           <FormGroup className="col-span-2">
