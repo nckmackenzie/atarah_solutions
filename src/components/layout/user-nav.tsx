@@ -21,6 +21,7 @@ import { toast } from 'sonner';
 import { useTheme } from '@/app/theme-provider';
 import { useUser } from '@/features/auth/hooks/use-user';
 import { supabase } from '@/lib/supabase/supabase';
+import { getInitials } from '@/lib/utils';
 
 export default function UserNav() {
   const queryClient = useQueryClient();
@@ -49,16 +50,20 @@ export default function UserNav() {
         <Button variant="outline" className="relative w-8 h-8 rounded-full">
           <Avatar className="w-8 h-8">
             <AvatarImage src="/user.png" alt="Avatar" />
-            <AvatarFallback className="bg-transparent">JD</AvatarFallback>
+            <AvatarFallback className="bg-transparent">
+              {user?.user_metadata.name
+                ? getInitials(user.user_metadata.name)
+                : 'U'}
+            </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            {user?.user_metadata?.fullName && (
-              <p className="text-sm font-medium leading-none">
-                {user?.user_metadata?.fullName || 'Jane Doe'}
+            {user?.user_metadata?.name && (
+              <p className="text-sm font-medium leading-none capitalize">
+                {user?.user_metadata?.name || 'Jane Doe'}
               </p>
             )}
             {user?.email && (
