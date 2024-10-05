@@ -7,6 +7,7 @@ import AppLayout from '@/components/layout/app-layout';
 import ContentWrapper from '@/components/layout/content-wrapper';
 import { adminRoutes } from '@/features/admin/routes';
 import ProfileIndexPage from '@/features/profile/pages';
+import { transanctionsRoutes } from '@/features/transactions/routes';
 
 export const router = createBrowserRouter([
   {
@@ -36,6 +37,7 @@ export const router = createBrowserRouter([
         element: <ProfileIndexPage />,
       },
       ...adminRoutes,
+      ...transanctionsRoutes,
     ],
   },
 ]);
