@@ -16,7 +16,7 @@ import { ErrorAlert } from '@/components/ui/custom-alert';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 
-import { dateFormat } from '@/lib/formatters';
+// import { dateFormat } from '@/lib/formatters';
 import { useMutate } from '@/hooks/use-mutate';
 import { createClient, updateClient } from '@/features/admin/api/customer';
 import { useFormReset } from '@/hooks/use-form-reset';
@@ -167,7 +167,7 @@ export default function ClientForm({ isEdit, data }: ClientFormProps) {
               </FormItem>
             )}
           />
-          {!isEdit && (
+          {/* {!isEdit && (
             <>
               {' '}
               <FormField
@@ -211,7 +211,7 @@ export default function ClientForm({ isEdit, data }: ClientFormProps) {
                 )}
               />
             </>
-          )}
+          )} */}
           {isEdit && (
             <FormField
               control={form.control}
