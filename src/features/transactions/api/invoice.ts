@@ -277,3 +277,8 @@ export async function updateInvoicePayment(
     }
   }
 }
+
+export async function deletePayment(id: string) {
+  await supabase.from('invoice_payments').delete().eq('paymentId', id);
+  await supabase.from('invoice_payment_header').delete().eq('id', id);
+}
