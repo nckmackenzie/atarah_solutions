@@ -12,6 +12,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 import { formatDateLong, numberFormat } from '@/lib/formatters';
+import { useDelete } from '@/hooks/use-delete';
+import { deletePayment } from '@/features/transactions/api/invoice';
 import type { InvoicePaymentRow } from '@/features/transactions/types/invoice.types';
 
 interface InvoicePaymentTableProps {
@@ -19,6 +21,7 @@ interface InvoicePaymentTableProps {
 }
 
 function InvoicePaymentTable({ data }: InvoicePaymentTableProps) {
+  const { destroy } = useDelete('invoice payments', deletePayment);
   const columns: ColumnDef<InvoicePaymentRow>[] = [
     {
       accessorKey: 'paymentDate',
@@ -71,7 +74,7 @@ function InvoicePaymentTable({ data }: InvoicePaymentTableProps) {
                 Edit
               </Link>
             </DropdownMenuItem>
-            <CustomAlertDialog>
+            <CustomAlertDialog onConfirm={() => destroy(row.original.id)}>
               <button className="delete-menu-item">Delete</button>
             </CustomAlertDialog>
           </CustomDropdownContent>
