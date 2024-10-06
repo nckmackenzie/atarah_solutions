@@ -29,19 +29,37 @@ export async function createClient(values: CustomerFormValues) {
   if (error) throw new Error(error.message);
 
   if (values?.openingBalance > 0) {
-    const { error: insertError } = await supabase
+    const { data: header } = await supabase
+      .from('invoice_headers')
+      .insert({
+        clientId: data[0].id,
+        invoiceDate: dateFormat(values.openingBalanceDate!),
+        dueDate: dateFormat(values.openingBalanceDate!),
+        inclusiveAmount: values.openingBalance,
+        exclusiveAmount: 0,
+        vatAmount: 0,
+        isOpeningBal: true,
+      })
+      .select('id')
+      .single();
+
+    const { data: insertData, error: insertError } = await supabase
       .from('invoice_payments')
       .insert([
         {
           transactionDate: dateFormat(values.openingBalanceDate!),
           amount: values.openingBalance,
           transacfionType: 'opening_balance',
+          invoiceId: header?.id,
         },
       ])
       .select();
 
-    if (insertError) {
+    if (!insertData) {
       await supabase.from('clients').delete().eq('id', data[0].id);
+    }
+
+    if (insertError) {
       throw new Error(insertError.message);
     }
   }
