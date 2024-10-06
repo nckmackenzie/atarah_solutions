@@ -122,11 +122,14 @@ export type Database = {
           clientId: string
           createdAt: string
           createdBy: string
+          dueDate: string | null
           exclusiveAmount: number
           id: string
           inclusiveAmount: number | null
           invoiceDate: string
-          invoiceNo: number
+          invoiceNo: number | null
+          isOpeningBal: boolean | null
+          terms: number | null
           vat: number
           vatAmount: number
           vatType: Database["public"]["Enums"]["vat_type"]
@@ -135,11 +138,14 @@ export type Database = {
           clientId: string
           createdAt?: string
           createdBy?: string
+          dueDate?: string | null
           exclusiveAmount: number
           id?: string
           inclusiveAmount?: number | null
           invoiceDate: string
-          invoiceNo: number
+          invoiceNo?: number | null
+          isOpeningBal?: boolean | null
+          terms?: number | null
           vat?: number
           vatAmount?: number
           vatType?: Database["public"]["Enums"]["vat_type"]
@@ -148,11 +154,14 @@ export type Database = {
           clientId?: string
           createdAt?: string
           createdBy?: string
+          dueDate?: string | null
           exclusiveAmount?: number
           id?: string
           inclusiveAmount?: number | null
           invoiceDate?: string
-          invoiceNo?: number
+          invoiceNo?: number | null
+          isOpeningBal?: boolean | null
+          terms?: number | null
           vat?: number
           vatAmount?: number
           vatType?: Database["public"]["Enums"]["vat_type"]
@@ -284,7 +293,32 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_invoice_bal: {
+        Args: {
+          invoice_id: string
+        }
+        Returns: number
+      }
+      get_invoices: {
+        Args: {
+          param: string
+        }
+        Returns: {
+          id: string
+          invoiceno: number
+          invoicedate: string
+          duedate: string
+          clientname: string
+          invoiceamount: number
+          invoicebalance: number
+        }[]
+      }
+      verify_user_password: {
+        Args: {
+          password: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       invoice_payment_type: "opening_balance" | "debit" | "credit"
