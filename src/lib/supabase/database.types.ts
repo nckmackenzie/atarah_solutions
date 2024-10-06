@@ -176,6 +176,44 @@ export type Database = {
           },
         ]
       }
+      invoice_payment_header: {
+        Row: {
+          clientId: string
+          createdAt: string
+          id: string
+          paymentDate: string
+          paymentMethod: Database["public"]["Enums"]["payment_type"]
+          paymentReference: string
+          totalAmount: number | null
+        }
+        Insert: {
+          clientId: string
+          createdAt?: string
+          id?: string
+          paymentDate: string
+          paymentMethod: Database["public"]["Enums"]["payment_type"]
+          paymentReference: string
+          totalAmount?: number | null
+        }
+        Update: {
+          clientId?: string
+          createdAt?: string
+          id?: string
+          paymentDate?: string
+          paymentMethod?: Database["public"]["Enums"]["payment_type"]
+          paymentReference?: string
+          totalAmount?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_payment_header_clientId_fkey"
+            columns: ["clientId"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoice_payments: {
         Row: {
           amount: number
@@ -183,6 +221,7 @@ export type Database = {
           createdBy: string
           id: string
           invoiceId: string | null
+          paymentId: string | null
           paymentMethod: Database["public"]["Enums"]["payment_type"] | null
           paymentReference: string | null
           transacfionType:
@@ -197,6 +236,7 @@ export type Database = {
           createdBy?: string
           id?: string
           invoiceId?: string | null
+          paymentId?: string | null
           paymentMethod?: Database["public"]["Enums"]["payment_type"] | null
           paymentReference?: string | null
           transacfionType?:
@@ -211,6 +251,7 @@ export type Database = {
           createdBy?: string
           id?: string
           invoiceId?: string | null
+          paymentId?: string | null
           paymentMethod?: Database["public"]["Enums"]["payment_type"] | null
           paymentReference?: string | null
           transacfionType?:
@@ -225,6 +266,13 @@ export type Database = {
             columns: ["invoiceId"]
             isOneToOne: false
             referencedRelation: "invoice_headers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_payments_paymentId_fkey"
+            columns: ["paymentId"]
+            isOneToOne: false
+            referencedRelation: "invoice_payment_header"
             referencedColumns: ["id"]
           },
         ]
@@ -298,6 +346,18 @@ export type Database = {
           invoice_id: string
         }
         Returns: number
+      }
+      get_invoice_with_balance_by_client: {
+        Args: {
+          client: string
+        }
+        Returns: {
+          id: string
+          invoiceno: number
+          duedate: string
+          invoiceamount: number
+          invoicebalance: number
+        }[]
       }
       get_invoices: {
         Args: {

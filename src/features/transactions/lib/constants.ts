@@ -9,3 +9,9 @@ export const VAT_TYPES = [
   { value: 'inclusive', label: 'Inclusive VAT' },
   { value: 'exclusive', label: 'Exclusive VAT' },
 ];
+
+export const PAYMENT_METHODS = [
+  { value: 'cash', label: 'Cash' },
+  { value: 'mpesa', label: 'Mpesa' },
+  { value: 'cheque', label: 'Cheque' },
+];

@@ -55,7 +55,7 @@ export const invoicePaymentFormSchema = z.object({
     required_error: 'Payment date is required',
     invalid_type_error: 'Payment date must be a date',
   }),
-  paymentMethod: z.enum(['cash', 'mpesa', 'cheque'], {
+  paymentMethod: z.enum(['cash', 'mpesa', 'cheque', 'bank'], {
     required_error: 'Payment method is required',
     invalid_type_error: 'Invalid payment method selected.',
   }),

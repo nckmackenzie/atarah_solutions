@@ -1,5 +1,9 @@
 import { supabase } from '@/lib/supabase/supabase';
-import type { InvoiceFormValues } from '@/features/transactions/types/invoice.types';
+import type {
+  InvoiceFormValues,
+  InvoicePaymentFormValues,
+  PaymentType,
+} from '@/features/transactions/types/invoice.types';
 import { calculateVatValues } from '@/features/transactions/lib/utils';
 import { dateFormat } from '@/lib/formatters';
 
@@ -149,4 +153,127 @@ export async function deleteInvoice(id: string) {
     .delete()
     .eq('id', id);
   if (error) throw new Error(error.message);
+}
+
+export async function fetchPendingInvoicesByClient(clientId: string) {
+  const { data, error } = await supabase.rpc(
+    'get_invoice_with_balance_by_client',
+    { client: clientId }
+  );
+
+  if (error) throw new Error(error.message);
+
+  return data;
+}
+
+export async function createPayment(values: InvoicePaymentFormValues) {
+  const { error, data } = await supabase
+    .from('invoice_payment_header')
+    .insert({
+      clientId: values.clientId,
+      paymentDate: dateFormat(values.paymentDate),
+      paymentMethod: values.paymentMethod,
+      paymentReference: values.paymentReference,
+      totalAmount: values.invoices.reduce(
+        (acc, cur) => acc + Number(cur.amountPaid),
+        0
+      ),
+    })
+    .select('id')
+    .single();
+
+  if (error) throw new Error(error.message);
+
+  if (data) {
+    const formatted = values.invoices
+      .filter(inv => inv.amountPaid > 0)
+      .map(inv => ({
+        transactionDate: dateFormat(values.paymentDate),
+        invoiceId: inv.invoiceId,
+        transacfionType: 'debit' as PaymentType,
+        amount: inv.amountPaid,
+        paymentMethod: values.paymentMethod,
+        paymentReference: values.paymentReference,
+        paymentId: data.id,
+      }));
+    const { data: paymentHeaderData } = await supabase
+      .from('invoice_payments')
+      .insert(formatted)
+      .select('id');
+
+    if (!paymentHeaderData) {
+      await supabase.from('invoice_payment_header').delete().eq('id', data.id);
+      throw new Error('Failed to create payment');
+    }
+  }
+}
+
+export async function fetchInvoicePayments(query?: string) {
+  let qry = supabase.from('invoice_payment_header').select('*,clients(name)');
+
+  if (query) {
+    qry = qry.like('clients.name', query);
+  }
+  const { data, error } = await qry.order('paymentDate', { ascending: false });
+
+  if (error) throw new Error(error.message);
+
+  return data;
+}
+
+export async function fetchInvoicePayment(id: string) {
+  const { data, error } = await supabase
+    .from('invoice_payment_header')
+    .select(
+      '*,invoice_payments(*,invoice_headers(invoiceNo,dueDate,inclusiveAmount))'
+    )
+    .eq('id', id)
+    .single();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function updateInvoicePayment(
+  id: string,
+  values: InvoicePaymentFormValues
+) {
+  const { data, error } = await supabase
+    .from('invoice_payment_header')
+    .update({
+      paymentDate: dateFormat(values.paymentDate),
+      paymentMethod: values.paymentMethod,
+      paymentReference: values.paymentReference,
+      totalAmount: values.invoices.reduce(
+        (acc, cur) => acc + Number(cur.amountPaid),
+        0
+      ),
+    })
+    .eq('id', id)
+    .select('id')
+    .single();
+  if (error) throw new Error(error.message);
+
+  if (data) {
+    await supabase.from('invoice_payments').delete().eq('paymentId', id);
+
+    const formatted = values.invoices
+      .filter(inv => inv.amountPaid > 0)
+      .map(inv => ({
+        transactionDate: dateFormat(values.paymentDate),
+        invoiceId: inv.invoiceId,
+        transacfionType: 'debit' as PaymentType,
+        amount: inv.amountPaid,
+        paymentMethod: values.paymentMethod,
+        paymentReference: values.paymentReference,
+        paymentId: data.id,
+      }));
+    const { data: paymentHeaderData } = await supabase
+      .from('invoice_payments')
+      .insert(formatted)
+      .select('id');
+
+    if (!paymentHeaderData) {
+      throw new Error('Failed to create payment');
+    }
+  }
 }
