@@ -48,3 +48,30 @@ export const invoiceFormSchema = z
       });
     }
   });
+
+export const invoicePaymentFormSchema = z.object({
+  clientId: z.string({ required_error: 'Client is required' }),
+  paymentDate: z.coerce.date({
+    required_error: 'Payment date is required',
+    invalid_type_error: 'Payment date must be a date',
+  }),
+  paymentMethod: z.enum(['cash', 'mpesa', 'cheque'], {
+    required_error: 'Payment method is required',
+    invalid_type_error: 'Invalid payment method selected.',
+  }),
+  paymentReference: z
+    .string({
+      required_error: 'Payment reference is required',
+    })
+    .min(1, 'Payment reference is required'),
+  invoices: z.array(
+    z.object({
+      invoiceId: z.string({ required_error: 'Invoice is required' }),
+      invoiceNo: z.string({ required_error: 'Invoice is required' }),
+      invoiceAmount: z.coerce.number(),
+      dueDate: z.coerce.date(),
+      balance: z.coerce.number(),
+      amountPaid: z.coerce.number(),
+    })
+  ),
+});
