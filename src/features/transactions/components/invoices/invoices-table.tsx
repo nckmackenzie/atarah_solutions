@@ -101,20 +101,33 @@ export default function InvoicesTable({ data }: InvoicesTableProps) {
 
         return (
           <DropdownMenu>
-            {invoiceNotPaid && (
-              <DropdownMenuTrigger asChild>
-                <button className="more-btn">
-                  <MoreVertical className="icon-muted" />
-                </button>
-              </DropdownMenuTrigger>
-            )}
+            <DropdownMenuTrigger asChild>
+              <button className="more-btn">
+                <MoreVertical className="icon-muted" />
+              </button>
+            </DropdownMenuTrigger>
+
             <CustomDropdownContent>
+              {invoiceNotPaid && (
+                <DropdownMenuItem asChild>
+                  <Link to={`/transactions/invoices/edit/${row.original.id}`}>
+                    Edit
+                  </Link>
+                </DropdownMenuItem>
+              )}
+
               <DropdownMenuItem asChild>
-                <Link to={`/transactions/invoices/edit/${row.original.id}`}>
-                  Edit
+                <Link
+                  to={`/transactions/invoices/new?cloneFrom=${row.original.id}`}
+                >
+                  Clone
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>Print</DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to={`/transactions/invoices/print/${row.original.id}`}>
+                  Print
+                </Link>
+              </DropdownMenuItem>
               {invoiceNotPaid && (
                 <CustomAlertDialog onConfirm={() => destroy(row.original.id)}>
                   <button className="delete-menu-item">Delete</button>
