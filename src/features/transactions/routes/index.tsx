@@ -7,6 +7,7 @@ import {
   InvoicesCreateEdit,
   InvoicePaymentsIndex,
   InvoicePaymentsCreateEdit,
+  InvoicePrint,
 } from '@/features/transactions/routes/utils';
 
 export const transanctionsRoutes: RouteObject[] = [
@@ -34,6 +35,14 @@ export const transanctionsRoutes: RouteObject[] = [
         element: (
           <Suspense fallback={<PageLoader />}>
             <InvoicesCreateEdit isEdit />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'invoices/print/:id',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <InvoicePrint />
           </Suspense>
         ),
       },

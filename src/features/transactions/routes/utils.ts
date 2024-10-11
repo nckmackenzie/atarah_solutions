@@ -8,6 +8,10 @@ export const InvoicesCreateEdit = lazy(
   () => import('@/features/transactions/pages/invoices/create-edit')
 );
 
+export const InvoicePrint = lazy(
+  () => import('@/features/transactions/pages/invoices/print')
+);
+
 export const InvoicePaymentsIndex = lazy(
   () => import('@/features/transactions/pages/invoice-payments')
 );
