@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { addDays, addMonths } from 'date-fns';
@@ -26,6 +27,7 @@ import { useClients } from '@/features/admin/hooks/clients/use-clients';
 import { useDocumentNumbers } from '@/hooks/use-document-number';
 import {
   createInvoice,
+  fetchInvoice,
   fetchInvoiceNo,
   updateInvoice,
 } from '@/features/transactions/api/invoice';
@@ -39,6 +41,8 @@ import type {
   Invoice,
   InvoiceFormValues,
 } from '@/features/transactions/types/invoice.types';
+import { useQuery } from '@tanstack/react-query';
+import { PageLoader } from '@/components/ui/loaders';
 
 interface InvoiceFormProps extends IsEditRequired {
   data?: Invoice;
@@ -46,6 +50,19 @@ interface InvoiceFormProps extends IsEditRequired {
 
 export default function InvoiceForm({ isEdit, data }: InvoiceFormProps) {
   const { user } = useUser();
+  const [searchParams] = useSearchParams();
+  const {
+    data: invoice,
+    error,
+    isLoading,
+  } = useQuery({
+    queryKey: ['invoice', 'clone', searchParams.get('cloneFrom')],
+    queryFn: () => {
+      if (!searchParams.get('cloneFrom')) return;
+      return fetchInvoice(searchParams.get('cloneFrom') as string);
+    },
+    enabled: !!searchParams.get('cloneFrom'),
+  });
   const form = useForm<InvoiceFormValues>({
     defaultValues: {
       clientId: '',
@@ -106,19 +123,43 @@ export default function InvoiceForm({ isEdit, data }: InvoiceFormProps) {
     [data, form, user]
   );
 
+  useEffect(
+    function () {
+      if (invoice) {
+        form.reset({
+          clientId: invoice.clientId,
+          terms: invoice.terms ?? undefined,
+          vatType: invoice.vatType,
+          vat: invoice.vat,
+          userId: user?.id,
+          items: invoice.invoice_details.map(item => ({
+            id: item.id.toString(),
+            serviceId: item.serviceId,
+            qty: item.qty,
+            rate: item.rate,
+          })),
+        });
+      }
+    },
+    [invoice, form, user]
+  );
+
   function onSubmit(values: InvoiceFormValues) {
     clearErrors();
     mutate(values, { onError: error => onError(error.message) });
   }
 
+  if (isLoading) return <PageLoader loaderText="Fetching cloned data..." />;
+
   return (
     <div className="y-spacing">
-      {(errorClients || docNumberError || errors) && (
+      {(errorClients || docNumberError || errors || error) && (
         <ErrorAlert
           error={
             errors ||
             errorClients?.message ||
             docNumberError?.message ||
+            error?.message ||
             'Error fetching'
           }
         />
