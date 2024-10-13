@@ -75,6 +75,42 @@ export type Database = {
         }
         Relationships: []
       }
+      glaccounts: {
+        Row: {
+          accountName: string
+          accountNo: string | null
+          accountTypeId: string | null
+          active: boolean
+          created_at: string
+          id: string
+          isBank: boolean
+          isSubCategory: boolean
+          parentId: string | null
+        }
+        Insert: {
+          accountName: string
+          accountNo?: string | null
+          accountTypeId?: string | null
+          active?: boolean
+          created_at?: string
+          id?: string
+          isBank?: boolean
+          isSubCategory?: boolean
+          parentId?: string | null
+        }
+        Update: {
+          accountName?: string
+          accountNo?: string | null
+          accountTypeId?: string | null
+          active?: boolean
+          created_at?: string
+          id?: string
+          isBank?: boolean
+          isSubCategory?: boolean
+          parentId?: string | null
+        }
+        Relationships: []
+      }
       invoice_details: {
         Row: {
           headerId: string
@@ -372,6 +408,12 @@ export type Database = {
           invoiceamount: number
           invoicebalance: number
         }[]
+      }
+      get_level: {
+        Args: {
+          level_id: number
+        }
+        Returns: number
       }
       verify_user_password: {
         Args: {
