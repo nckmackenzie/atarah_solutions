@@ -19,3 +19,11 @@ export const ServicesIndexPage = lazy(
 export const CreateEditServicePage = lazy(
   () => import('@/features/admin/pages/services/create-edit')
 );
+
+export const GlAccountsIndexPage = lazy(
+  () => import('@/features/admin/pages/glaccounts')
+);
+
+export const CreateEditGlAccountsPage = lazy(
+  () => import('@/features/admin/pages/glaccounts/create-edit')
+);
