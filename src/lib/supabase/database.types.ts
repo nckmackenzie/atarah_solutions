@@ -48,6 +48,82 @@ export type Database = {
         }
         Relationships: []
       }
+      expenses_details: {
+        Row: {
+          accountId: string
+          amount: number
+          headerId: string
+          id: number
+          narration: string | null
+        }
+        Insert: {
+          accountId: string
+          amount: number
+          headerId: string
+          id?: number
+          narration?: string | null
+        }
+        Update: {
+          accountId?: string
+          amount?: number
+          headerId?: string
+          id?: number
+          narration?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expenses_details_accountId_fkey"
+            columns: ["accountId"]
+            isOneToOne: false
+            referencedRelation: "glaccounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expenses_details_headerId_fkey"
+            columns: ["headerId"]
+            isOneToOne: false
+            referencedRelation: "expenses_headers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expenses_details_headerId_fkey"
+            columns: ["headerId"]
+            isOneToOne: false
+            referencedRelation: "vw_expenses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      expenses_headers: {
+        Row: {
+          createdAt: string
+          expenseDate: string
+          expenseNo: number
+          id: string
+          payee: string
+          paymentMethod: Database["public"]["Enums"]["payment_type"]
+          paymentReference: string | null
+        }
+        Insert: {
+          createdAt?: string
+          expenseDate: string
+          expenseNo: number
+          id?: string
+          payee: string
+          paymentMethod: Database["public"]["Enums"]["payment_type"]
+          paymentReference?: string | null
+        }
+        Update: {
+          createdAt?: string
+          expenseDate?: string
+          expenseNo?: number
+          id?: string
+          payee?: string
+          paymentMethod?: Database["public"]["Enums"]["payment_type"]
+          paymentReference?: string | null
+        }
+        Relationships: []
+      }
       forms: {
         Row: {
           formName: string
@@ -109,7 +185,15 @@ export type Database = {
           isSubCategory?: boolean
           parentId?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "glaccounts_parentId_fkey"
+            columns: ["parentId"]
+            isOneToOne: false
+            referencedRelation: "glaccounts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       invoice_details: {
         Row: {
@@ -374,7 +458,33 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      vw_expenses: {
+        Row: {
+          amount: number | null
+          expenseDate: string | null
+          expenseNo: number | null
+          id: string | null
+          payee: string | null
+          paymentMethod: Database["public"]["Enums"]["payment_type"] | null
+        }
+        Insert: {
+          amount?: never
+          expenseDate?: string | null
+          expenseNo?: number | null
+          id?: string | null
+          payee?: string | null
+          paymentMethod?: Database["public"]["Enums"]["payment_type"] | null
+        }
+        Update: {
+          amount?: never
+          expenseDate?: string | null
+          expenseNo?: number | null
+          id?: string | null
+          payee?: string | null
+          paymentMethod?: Database["public"]["Enums"]["payment_type"] | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       get_invoice_bal: {
