@@ -8,6 +8,8 @@ import {
   InvoicePaymentsIndex,
   InvoicePaymentsCreateEdit,
   InvoicePrint,
+  ExpensesIndex,
+  CreateEditExpense,
 } from '@/features/transactions/routes/utils';
 
 export const transanctionsRoutes: RouteObject[] = [
@@ -67,6 +69,30 @@ export const transanctionsRoutes: RouteObject[] = [
         element: (
           <Suspense fallback={<PageLoader />}>
             <InvoicePaymentsCreateEdit isEdit />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'expenses',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <ExpensesIndex />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'expenses/new',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <CreateEditExpense />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'expenses/edit/:id',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <CreateEditExpense isEdit />
           </Suspense>
         ),
       },

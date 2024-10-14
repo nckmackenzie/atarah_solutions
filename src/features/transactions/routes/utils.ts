@@ -19,3 +19,11 @@ export const InvoicePaymentsIndex = lazy(
 export const InvoicePaymentsCreateEdit = lazy(
   () => import('@/features/transactions/pages/invoice-payments/create-edit')
 );
+
+export const ExpensesIndex = lazy(
+  () => import('@/features/transactions/pages/expenses')
+);
+
+export const CreateEditExpense = lazy(
+  () => import('@/features/transactions/pages/expenses/create-edit')
+);
