@@ -28,8 +28,12 @@ export function useAccounts() {
         parentId: account.parentId as string,
       })) || [];
 
-  const expenseId = data?.find(dt => dt.accountName === 'expenses')?.id || '';
-  const expenseAccounts = data?.filter(dt => dt.parentId === expenseId) || [];
+  const expenseId = data?.find(dt => dt.accountName === 'expense')?.id || '';
+  const expenseAccounts =
+    data
+      ?.filter(dt => dt.parentId === expenseId)
+      .map(exp => ({ value: exp.id, label: exp.accountName.toUpperCase() })) ||
+    [];
 
   return {
     accountTypes,
