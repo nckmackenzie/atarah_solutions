@@ -25,10 +25,9 @@ export function getInitials(fullName: string | null): string {
 }
 
 export function generateUniqueId(length: number = 10): string {
-  const array = new Uint8Array(Math.ceil(length * 0.75)); // Adjust size for base-36 conversion
+  const array = new Uint8Array(Math.ceil(length * 0.75));
   crypto.getRandomValues(array);
 
-  // Convert to a base-36 string (0-9, a-z) and slice to the desired length
   return Array.from(array, byte => byte.toString(36))
     .join('')
     .slice(0, length);
