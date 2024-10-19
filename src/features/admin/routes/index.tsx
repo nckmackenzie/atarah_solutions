@@ -10,6 +10,8 @@ import {
   CreateEditServicePage,
   GlAccountsIndexPage,
   CreateEditGlAccountsPage,
+  ProjectsIndexPage,
+  ProjectCreateEditPage,
 } from '@/features/admin/routes/utils';
 
 export const adminRoutes: RouteObject[] = [
@@ -93,6 +95,30 @@ export const adminRoutes: RouteObject[] = [
         element: (
           <Suspense fallback={<PageLoader />}>
             <CreateEditGlAccountsPage isEdit />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'projects',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <ProjectsIndexPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'projects/new',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <ProjectCreateEditPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'projects/edit/:id',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <ProjectCreateEditPage isEdit />
           </Suspense>
         ),
       },

@@ -27,3 +27,11 @@ export const GlAccountsIndexPage = lazy(
 export const CreateEditGlAccountsPage = lazy(
   () => import('@/features/admin/pages/glaccounts/create-edit')
 );
+
+export const ProjectsIndexPage = lazy(
+  () => import('@/features/admin/pages/projects')
+);
+
+export const ProjectCreateEditPage = lazy(
+  () => import('@/features/admin/pages/projects/create-edit')
+);
