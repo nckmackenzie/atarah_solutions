@@ -9,7 +9,7 @@ import FormFieldLoading from '@/components/ui/form-field-loading';
 import { Input } from '@/components/ui/input';
 
 import { useService } from '@/features/admin/hooks/services/use-service';
-import { fetchServiceRate } from '@/features/transactions/api/invoice';
+import { fetchServiceDetails } from '@/features/transactions/api/invoice';
 import { numberFormat } from '@/lib/formatters';
 import type { InvoiceFormValues } from '@/features/transactions/types/invoice.types';
 import type { IsPending } from '@/types/index.types';
@@ -44,9 +44,10 @@ export default function InvoiceItems({
     form.setValue(`items.${index}.serviceId`, value);
 
     try {
-      const rate = await fetchServiceRate(value);
+      const details = await fetchServiceDetails(value);
 
-      form.setValue(`items.${index}.rate`, rate);
+      form.setValue(`items.${index}.rate`, details.serviceRate);
+      form.setValue(`items.${index}.accountId`, details.accountId);
     } catch (error) {
       if (error instanceof Error) {
         onError(error.message);
@@ -66,6 +67,7 @@ export default function InvoiceItems({
             qty: 1,
             rate: 0,
             id: new Date().getTime().toString(),
+            accountId: 0,
           })
         }
       >
