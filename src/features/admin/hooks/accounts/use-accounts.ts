@@ -31,7 +31,7 @@ export function useAccounts() {
   const expenseId = data?.find(dt => dt.accountName === 'expense')?.id || '';
   const expenseAccounts =
     data
-      ?.filter(dt => dt.parentId === expenseId)
+      ?.filter(dt => dt.accountTypeId === expenseId)
       .map(exp => ({
         value: exp.id.toString(),
         label: exp.accountName.toUpperCase(),
