@@ -38,7 +38,7 @@ export default function AccountsTable({ data }: AccountsTableProps) {
           <CustomDropdownTrigger />
           <CustomRegularDropdownContent
             to={`/admin/glaccounts/edit/${row.original.id}`}
-            id={row.original.id}
+            id={row.original.id.toString()}
             queryKey="gl accounts"
             deleteFn={deleteAccount}
           />
