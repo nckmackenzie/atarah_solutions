@@ -19,16 +19,16 @@ export async function fetchInvoiceNo() {
   return data.length ? data[0].invoiceNo! + 1 : 1001;
 }
 
-export async function fetchServiceRate(value: string) {
+export async function fetchServiceDetails(value: string) {
   const { data, error } = await supabase
     .from('services')
-    .select('serviceRate')
+    .select('serviceRate,accountId')
     .eq('id', value)
     .single();
 
   if (error) throw new Error(error.message);
 
-  return data.serviceRate || 0;
+  return data;
 }
 
 export async function createInvoice(values: InvoiceFormValues) {
@@ -76,6 +76,42 @@ export async function createInvoice(values: InvoiceFormValues) {
       await supabase.from('invoice_headers').delete().eq('id', data.id);
       throw new Error('Failed to create invoice');
     }
+
+    values.items.forEach(async item => {
+      const totalAmount = item.qty * item.rate;
+      const vatAmounts = calculateVatValues(
+        values.vatType,
+        totalAmount,
+        values.vat || 16
+      );
+      const { data: accountDetails } = await supabase
+        .rpc('get_account_details', {
+          accid: item.accountId,
+        })
+        .single();
+
+      if (!accountDetails) throw new Error('Account not found');
+
+      await supabase.from('ledger').insert({
+        account: accountDetails?.accountname.toLowerCase(),
+        transactionDate: dateFormat(values.invoiceDate),
+        transactionType: 'invoice',
+        transactionId: data.id,
+        accountTypeId: accountDetails.accounttypeid,
+        parentAccount: accountDetails.parent,
+        credit: vatAmounts.inclusive,
+      });
+    });
+
+    await supabase.from('ledger').insert({
+      account: 'accounts receivable',
+      transactionDate: dateFormat(values.invoiceDate),
+      transactionType: 'invoice',
+      transactionId: data.id,
+      accountTypeId: 3,
+      parentAccount: 'accounts receivable',
+      debit: amounts.inclusive,
+    });
   }
 }
 
@@ -125,6 +161,11 @@ export async function updateInvoice(id: string, values: InvoiceFormValues) {
 
   if (data) {
     await supabase.from('invoice_details').delete().eq('headerId', id);
+    await supabase
+      .from('ledger')
+      .delete()
+      .eq('transactionId', id)
+      .eq('transactionType', 'invoice');
 
     const formattedDetails = values.items.map(item => ({
       headerId: data.id,
@@ -142,11 +183,52 @@ export async function updateInvoice(id: string, values: InvoiceFormValues) {
     if (!detailsData) {
       throw new Error('Failed to create invoice');
     }
+
+    values.items.forEach(async item => {
+      const totalAmount = item.qty * item.rate;
+      const vatAmounts = calculateVatValues(
+        values.vatType,
+        totalAmount,
+        values.vat || 16
+      );
+      const { data: accountDetails } = await supabase
+        .rpc('get_account_details', {
+          accid: item.accountId,
+        })
+        .single();
+
+      if (!accountDetails) throw new Error('Account not found');
+
+      await supabase.from('ledger').insert({
+        account: accountDetails?.accountname.toLowerCase(),
+        transactionDate: dateFormat(values.invoiceDate),
+        transactionType: 'invoice',
+        transactionId: data.id,
+        accountTypeId: accountDetails.accounttypeid,
+        parentAccount: accountDetails.parent,
+        credit: vatAmounts.inclusive,
+      });
+    });
+
+    await supabase.from('ledger').insert({
+      account: 'accounts receivable',
+      transactionDate: dateFormat(values.invoiceDate),
+      transactionType: 'invoice',
+      transactionId: data.id,
+      accountTypeId: 3,
+      parentAccount: 'accounts receivable',
+      debit: amounts.inclusive,
+    });
   }
 }
 
 export async function deleteInvoice(id: string) {
   await supabase.from('invoice_details').delete().eq('headerId', id);
+  await supabase
+    .from('ledger')
+    .delete()
+    .eq('transactionId', id)
+    .eq('transactionType', 'invoice');
 
   const { error } = await supabase
     .from('invoice_headers')
