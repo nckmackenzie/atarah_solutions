@@ -1,10 +1,9 @@
 import { supabase } from '@/lib/supabase/supabase';
 import type { GlAccountFormValues } from '@/features/admin/types/glaccount.types';
-import { generateUniqueId } from '@/lib/utils';
 
 export async function fetchAccounts(query?: string) {
   let qry = supabase
-    .from('glaccounts')
+    .from('gl_accounts')
     .select(
       'accountName,accountTypeId,active,id,parentId,accountNo,isSubCategory'
     );
@@ -21,7 +20,7 @@ export async function fetchAccounts(query?: string) {
 
 export async function fetchGlAccounts(query?: string) {
   let qry = supabase
-    .from('glaccounts')
+    .from('gl_accounts')
     .select(
       'accountName,accountTypeId,active,id,parentId,accountNo,isSubCategory'
     )
@@ -38,8 +37,7 @@ export async function fetchGlAccounts(query?: string) {
 }
 
 export async function createAccount(values: GlAccountFormValues) {
-  const { error } = await supabase.from('glaccounts').insert({
-    id: generateUniqueId(10),
+  const { error } = await supabase.from('gl_accounts').insert({
     accountName: values.name.toLowerCase(),
     accountTypeId: values.accountTypeId,
     isSubCategory: values.isSubcategory,
@@ -52,7 +50,7 @@ export async function createAccount(values: GlAccountFormValues) {
 
 export async function fetchAccount(id: string) {
   const { data, error } = await supabase
-    .from('glaccounts')
+    .from('gl_accounts')
     .select(
       'accountName,accountTypeId,active,id,parentId,accountNo,isSubCategory'
     )
@@ -64,7 +62,7 @@ export async function fetchAccount(id: string) {
 
 export async function updateAccount(id: string, values: GlAccountFormValues) {
   const { error } = await supabase
-    .from('glaccounts')
+    .from('gl_accounts')
     .update({
       accountName: values.name.toLowerCase(),
       accountTypeId: values.accountTypeId,
@@ -78,6 +76,6 @@ export async function updateAccount(id: string, values: GlAccountFormValues) {
 }
 
 export async function deleteAccount(id: string) {
-  const { error } = await supabase.from('glaccounts').delete().eq('id', id);
+  const { error } = await supabase.from('gl_accounts').delete().eq('id', id);
   if (error) throw new Error(error.message);
 }
