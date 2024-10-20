@@ -249,6 +249,10 @@ export async function fetchPendingInvoicesByClient(clientId: string) {
 }
 
 export async function createPayment(values: InvoicePaymentFormValues) {
+  const totalAmount = values.invoices.reduce(
+    (acc, cur) => acc + Number(cur.amountPaid),
+    0
+  );
   const { error, data } = await supabase
     .from('invoice_payment_header')
     .insert({
@@ -256,10 +260,7 @@ export async function createPayment(values: InvoicePaymentFormValues) {
       paymentDate: dateFormat(values.paymentDate),
       paymentMethod: values.paymentMethod,
       paymentReference: values.paymentReference,
-      totalAmount: values.invoices.reduce(
-        (acc, cur) => acc + Number(cur.amountPaid),
-        0
-      ),
+      totalAmount,
     })
     .select('id')
     .single();
@@ -287,6 +288,26 @@ export async function createPayment(values: InvoicePaymentFormValues) {
       await supabase.from('invoice_payment_header').delete().eq('id', data.id);
       throw new Error('Failed to create payment');
     }
+
+    await supabase.from('ledger').insert({
+      account: 'accounts receivable',
+      transactionDate: dateFormat(values.paymentDate),
+      transactionType: 'invoice_payment',
+      transactionId: data.id,
+      accountTypeId: 3,
+      parentAccount: 'accounts receivable',
+      credit: totalAmount,
+    });
+
+    await supabase.from('ledger').insert({
+      account: 'cash and cash equivalents',
+      transactionDate: dateFormat(values.paymentDate),
+      transactionType: 'invoice_payment',
+      transactionId: data.id,
+      accountTypeId: 3,
+      parentAccount: 'cash and cash equivalents',
+      debit: totalAmount,
+    });
   }
 }
 
@@ -319,16 +340,17 @@ export async function updateInvoicePayment(
   id: string,
   values: InvoicePaymentFormValues
 ) {
+  const totalAmount = values.invoices.reduce(
+    (acc, cur) => acc + Number(cur.amountPaid),
+    0
+  );
   const { data, error } = await supabase
     .from('invoice_payment_header')
     .update({
       paymentDate: dateFormat(values.paymentDate),
       paymentMethod: values.paymentMethod,
       paymentReference: values.paymentReference,
-      totalAmount: values.invoices.reduce(
-        (acc, cur) => acc + Number(cur.amountPaid),
-        0
-      ),
+      totalAmount,
     })
     .eq('id', id)
     .select('id')
@@ -337,6 +359,11 @@ export async function updateInvoicePayment(
 
   if (data) {
     await supabase.from('invoice_payments').delete().eq('paymentId', id);
+    await supabase
+      .from('ledger')
+      .delete()
+      .eq('transactionId', id)
+      .eq('transactionType', 'invoice_payment');
 
     const formatted = values.invoices
       .filter(inv => inv.amountPaid > 0)
@@ -357,10 +384,35 @@ export async function updateInvoicePayment(
     if (!paymentHeaderData) {
       throw new Error('Failed to create payment');
     }
+
+    await supabase.from('ledger').insert({
+      account: 'accounts receivable',
+      transactionDate: dateFormat(values.paymentDate),
+      transactionType: 'invoice_payment',
+      transactionId: data.id,
+      accountTypeId: 3,
+      parentAccount: 'accounts receivable',
+      credit: totalAmount,
+    });
+
+    await supabase.from('ledger').insert({
+      account: 'cash and cash equivalents',
+      transactionDate: dateFormat(values.paymentDate),
+      transactionType: 'invoice_payment',
+      transactionId: data.id,
+      accountTypeId: 3,
+      parentAccount: 'cash and cash equivalents',
+      debit: totalAmount,
+    });
   }
 }
 
 export async function deletePayment(id: string) {
   await supabase.from('invoice_payments').delete().eq('paymentId', id);
   await supabase.from('invoice_payment_header').delete().eq('id', id);
+  await supabase
+    .from('ledger')
+    .delete()
+    .eq('transactionId', id)
+    .eq('transactionType', 'invoice_payment');
 }
