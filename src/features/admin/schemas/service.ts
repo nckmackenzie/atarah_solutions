@@ -16,5 +16,6 @@ export const serviceFormSchema = z
       .positive('Service rate must be greater than 0'),
     description: z.string().trim().optional(),
     active: z.boolean().default(true),
+    accountId: z.string({required_error: 'G/L account is required'}).trim().min(1, 'G/L account is required'),
   })
   .strict();
