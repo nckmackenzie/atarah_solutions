@@ -26,6 +26,10 @@ export async function fetchExpenses(query?: string) {
 
 export async function createExpense(values: ExpenseFormValues) {
   const expenseNo = await fetchExpenseNo();
+  const totalAmount = values.details.reduce(
+    (acc, cur) => acc + Number(cur.amount),
+    0
+  );
 
   const { error, data } = await supabase
     .from('expenses_headers')
@@ -56,6 +60,37 @@ export async function createExpense(values: ExpenseFormValues) {
     await supabase.from('expenses_headers').delete().eq('id', data.id);
     throw new Error('Failed to create expense');
   }
+
+  values.details.forEach(async item => {
+    const { data: accountDetails } = await supabase
+      .rpc('get_account_details', {
+        accid: item.accountId,
+      })
+      .single();
+
+    if (!accountDetails) throw new Error('Account not found');
+
+    await supabase.from('ledger').insert({
+      account: accountDetails?.accountname.toLowerCase(),
+      transactionDate: dateFormat(values.expenseDate),
+      transactionType: 'expense',
+      transactionId: data.id,
+      accountTypeId: accountDetails.accounttypeid,
+      parentAccount: accountDetails.parent,
+      debit: item.amount,
+      narration: item.narration,
+    });
+  });
+
+  await supabase.from('ledger').insert({
+    account: 'cash and cash equivalents',
+    transactionDate: dateFormat(values.expenseDate),
+    transactionType: 'expense',
+    transactionId: data.id,
+    accountTypeId: 3,
+    parentAccount: 'cash and cash equivalents',
+    credit: totalAmount,
+  });
 }
 
 export async function fetchExpense(id: string) {
@@ -81,6 +116,10 @@ export async function fetchExpense(id: string) {
 }
 
 export async function updateExpense(id: string, values: ExpenseFormValues) {
+  const totalAmount = values.details.reduce(
+    (acc, cur) => acc + Number(cur.amount),
+    0
+  );
   const { error } = await supabase
     .from('expenses_headers')
     .update({
@@ -93,6 +132,11 @@ export async function updateExpense(id: string, values: ExpenseFormValues) {
   if (error) throw new Error(error.message);
 
   await supabase.from('expenses_details').delete().eq('headerId', id);
+  await supabase
+    .from('ledger')
+    .delete()
+    .eq('transactionId', id)
+    .eq('transactionType', 'expense');
 
   const formattedExpense = values.details.map(detail => ({
     headerId: id,
@@ -101,10 +145,46 @@ export async function updateExpense(id: string, values: ExpenseFormValues) {
     narration: detail?.narration?.toLowerCase(),
   }));
   await supabase.from('expenses_details').insert(formattedExpense);
+
+  values.details.forEach(async item => {
+    const { data: accountDetails } = await supabase
+      .rpc('get_account_details', {
+        accid: item.accountId,
+      })
+      .single();
+
+    if (!accountDetails) throw new Error('Account not found');
+
+    await supabase.from('ledger').insert({
+      account: accountDetails?.accountname.toLowerCase(),
+      transactionDate: dateFormat(values.expenseDate),
+      transactionType: 'expense',
+      transactionId: id,
+      accountTypeId: accountDetails.accounttypeid,
+      parentAccount: accountDetails.parent,
+      debit: item.amount,
+      narration: item.narration,
+    });
+  });
+
+  await supabase.from('ledger').insert({
+    account: 'cash and cash equivalents',
+    transactionDate: dateFormat(values.expenseDate),
+    transactionType: 'expense',
+    transactionId: id,
+    accountTypeId: 3,
+    parentAccount: 'cash and cash equivalents',
+    credit: totalAmount,
+  });
 }
 
 export async function deleteExpense(id: string) {
   await supabase.from('expenses_details').delete().eq('headerId', id);
+  await supabase
+    .from('ledger')
+    .delete()
+    .eq('transactionId', id)
+    .eq('transactionType', 'expense');
 
   const { error } = await supabase
     .from('expenses_headers')
