@@ -16,7 +16,7 @@ export function useAccounts() {
       ?.filter(dt => dt.parentId === null)
       .map(account => ({
         label: account.accountName.toUpperCase(),
-        value: account.id,
+        value: account.id.toString(),
       })) || [];
 
   const accounts =
@@ -24,16 +24,18 @@ export function useAccounts() {
       ?.filter(dt => dt.parentId)
       .map(account => ({
         label: account.accountName.toUpperCase(),
-        value: account.id,
-        parentId: account.parentId as string,
+        value: account.id.toString(),
+        parentId: account.parentId,
       })) || [];
 
   const expenseId = data?.find(dt => dt.accountName === 'expense')?.id || '';
   const expenseAccounts =
     data
       ?.filter(dt => dt.parentId === expenseId)
-      .map(exp => ({ value: exp.id, label: exp.accountName.toUpperCase() })) ||
-    [];
+      .map(exp => ({
+        value: exp.id.toString(),
+        label: exp.accountName.toUpperCase(),
+      })) || [];
 
   return {
     accountTypes,
