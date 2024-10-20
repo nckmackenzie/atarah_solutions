@@ -69,7 +69,7 @@ export default function GlAccountsForm({ isEdit, data }: GlAccountsFormProps) {
   );
 
   const parentAccounts = accounts?.filter(
-    acc => acc.parentId === form.watch('accountTypeId')
+    acc => acc.parentId === Number(form.watch('accountTypeId'))
   );
 
   function onSubmit(values: GlAccountFormValues) {
