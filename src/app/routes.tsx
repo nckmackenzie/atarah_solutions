@@ -8,6 +8,7 @@ import ContentWrapper from '@/components/layout/content-wrapper';
 import { adminRoutes } from '@/features/admin/routes';
 import ProfileIndexPage from '@/features/profile/pages';
 import { transanctionsRoutes } from '@/features/transactions/routes';
+import { reportRoutes } from '@/features/reports/routes';
 
 export const router = createBrowserRouter([
   {
@@ -38,6 +39,7 @@ export const router = createBrowserRouter([
       },
       ...adminRoutes,
       ...transanctionsRoutes,
+      ...reportRoutes,
     ],
   },
 ]);
