@@ -578,6 +578,20 @@ export type Database = {
           parent: string
         }[]
       }
+      get_client_statement: {
+        Args: {
+          client: string
+          from_date: string
+          to_date: string
+        }
+        Returns: {
+          date: string
+          reference: string
+          debit: number
+          credit: number
+          balance: number
+        }[]
+      }
       get_expenses_report: {
         Args: {
           fdate: string
