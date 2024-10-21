@@ -7,8 +7,10 @@ import OutstandingInvoicesTable from '@/features/reports/components/outstanding-
 
 import { usePageFetch } from '@/hooks/use-page-fetch';
 import { fetchOutstandingInvoices } from '@/features/reports/api';
+import { useDocumentTitle } from '@/hooks/use-title';
 
 export default function OutstandingInvoices() {
+  useDocumentTitle('Outstanding Invoices');
   const { data, error, isLoading } = usePageFetch(
     'outstanding invoices',
     fetchOutstandingInvoices

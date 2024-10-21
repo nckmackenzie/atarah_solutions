@@ -26,8 +26,10 @@ import type {
 import { fetchCollectedPayments } from '@/features/reports/api';
 import ReportLoading from '../components/report-loading';
 import CollectionReportTable from '../components/collection-report-table';
+import { useDocumentTitle } from '@/hooks/use-title';
 
 export default function CollectedPaymentsPage() {
+  useDocumentTitle('Collected Payments');
   const [reportValues, setReportValues] = useState<PaymentCollectionValues>();
 
   const { data, isLoading, error } = useQuery({

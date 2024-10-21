@@ -25,8 +25,10 @@ import type {
   ExpenseParamValues,
   ExpenseReportFormValues,
 } from '@/features/reports/types/index.types';
+import { useDocumentTitle } from '@/hooks/use-title';
 
 export default function ExpensesReportPage() {
+  useDocumentTitle('Expenses Report');
   const [reportValues, setReportValues] = useState<ExpenseParamValues>();
   const { isLoading, data, error } = useQuery({
     queryKey: ['expenses report', reportValues],
