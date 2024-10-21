@@ -26,8 +26,8 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from './dropdown-menu';
-import { Button } from './button';
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -39,6 +39,7 @@ interface DataTableProps<TData, TValue> {
   hasInvisibleColumns?: boolean;
   columnsWithVisibilityStatus?: any;
   defaultPageSize?: number;
+  customFooter?: React.ReactNode;
 }
 
 export function DataTable<TData, TValue>({
@@ -51,6 +52,7 @@ export function DataTable<TData, TValue>({
   hasInvisibleColumns,
   columnsWithVisibilityStatus,
   defaultPageSize,
+  customFooter,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -165,8 +167,15 @@ export function DataTable<TData, TValue>({
           {hasTotalsFooter && (
             <TableFooter>
               <TableRow>
-                <TableCell colSpan={footerColspan}>Total</TableCell>
-                <TableCell className="text-right">{footerTotalValue}</TableCell>
+                {!customFooter && (
+                  <>
+                    <TableCell colSpan={footerColspan}>Total</TableCell>
+                    <TableCell className="text-right">
+                      {footerTotalValue}
+                    </TableCell>
+                  </>
+                )}
+                {customFooter && customFooter}
               </TableRow>
             </TableFooter>
           )}
