@@ -10,6 +10,7 @@ import {
   formatDateReporting,
   numberFormat,
 } from '@/lib/formatters';
+import { TableCell } from '@/components/ui/table';
 
 interface OutstandingInvoicesTableProps {
   data: OutstandingInvoice[];
@@ -81,7 +82,29 @@ export default function OutstandingInvoicesTable({
       <Button variant="excel" onClick={() => exportToExcel(dataToExport)}>
         Export to Excel
       </Button>
-      <DataTable columns={columns} data={data} />
+      <DataTable
+        columns={columns}
+        data={data}
+        hasTotalsFooter
+        customFooter={
+          <>
+            <TableCell colSpan={4}>Total</TableCell>
+            <TableCell className="text-right">
+              {numberFormat(
+                data.reduce(
+                  (acc, curr) => acc + Number(curr.inclusiveAmount),
+                  0
+                )
+              )}
+            </TableCell>
+            <TableCell className="text-right">
+              {numberFormat(
+                data.reduce((acc, curr) => acc + Number(curr.balance), 0)
+              )}
+            </TableCell>
+          </>
+        }
+      />
     </div>
   );
 }
