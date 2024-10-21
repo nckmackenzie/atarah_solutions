@@ -578,6 +578,24 @@ export type Database = {
           parent: string
         }[]
       }
+      get_expenses_report: {
+        Args: {
+          fdate: string
+          tdate: string
+          rtype: string
+          accid?: number
+          pid?: string
+        }
+        Returns: {
+          expenseDate: string
+          accountName: string
+          payee: string
+          paymentMethod: Database["public"]["Enums"]["payment_type"]
+          paymentReference: string
+          projectName: string
+          amount: number
+        }[]
+      }
       get_invoice_bal: {
         Args: {
           invoice_id: string
@@ -615,6 +633,33 @@ export type Database = {
           level_id: number
         }
         Returns: number
+      }
+      get_outstanding_invoices: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          name: string
+          invoiceNo: number
+          invoiceDate: string
+          inclusiveAmount: number
+          balance: number
+          dueDate: string
+          dif: number
+        }[]
+      }
+      get_payment_report: {
+        Args: {
+          fdate: string
+          tdate: string
+          rtype: string
+          cid?: string
+        }
+        Returns: {
+          paymentDate: string
+          name: string
+          paymentMethod: Database["public"]["Enums"]["payment_type"]
+          paymentReference: string
+          totalAmount: number
+        }[]
       }
       verify_user_password: {
         Args: {
