@@ -141,7 +141,7 @@ function Actions({ onSetReportValues }: ActionProps) {
         {isLoadingClients ? (
           <FormFieldLoading
             label="Client"
-            className="col-span-full md:col-span-46"
+            className="col-span-full md:col-span-4"
           />
         ) : (
           <FormGroup className="space-y-1 col-span-full md:col-span-4">
