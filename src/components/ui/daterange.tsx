@@ -18,12 +18,14 @@ interface DateRangeProps {
   date: DateRange | undefined;
   onSetDate: Dispatch<SetStateAction<DateRange | undefined>>;
   setQueryParams?: boolean;
+  className?: string;
 }
 
 export default function DateRangePicker({
   date,
   onSetDate,
   setQueryParams,
+  className,
 }: DateRangeProps) {
   const setParams = useSetParams();
   return (
@@ -37,6 +39,7 @@ export default function DateRangePicker({
             disabled={false}
             className={cn(
               'w-[300px] justify-start text-left font-normal',
+              className,
               !date && 'text-muted-foreground'
             )}
           >
