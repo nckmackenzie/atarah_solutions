@@ -5,6 +5,7 @@ import {
   ClientStatementPage,
   CollectedPaymentsPage,
   ExpensesReportPage,
+  IncomeStatementPage,
   OutstandingInvoicesPage,
 } from '@/features/reports/routes/utils';
 import { PageLoader } from '@/components/ui/loaders';
@@ -42,6 +43,14 @@ export const reportRoutes: RouteObject[] = [
         element: (
           <Suspense fallback={<PageLoader />}>
             <ExpensesReportPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'income-statement',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <IncomeStatementPage />
           </Suspense>
         ),
       },

@@ -15,3 +15,7 @@ export const ExpensesReportPage = lazy(
 export const ClientStatementPage = lazy(
   () => import('@/features/reports/pages/client-statement')
 );
+
+export const IncomeStatementPage = lazy(
+  () => import('@/features/reports/pages/income-statement')
+);
