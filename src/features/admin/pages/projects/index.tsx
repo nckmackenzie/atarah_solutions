@@ -18,7 +18,7 @@ export default function ProjectsIndexPage() {
     <ContentWrapper>
       <div className="y-spacing">
         <CreateNewButton href="/admin/projects/new">
-          <Kanban />
+          <Kanban className="icon mr-2" />
           <span>Create new project</span>
         </CreateNewButton>
         {error && <ErrorAlert error={error.message} />}
