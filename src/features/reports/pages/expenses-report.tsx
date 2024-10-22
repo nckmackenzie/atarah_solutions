@@ -26,6 +26,7 @@ import type {
   ExpenseReportFormValues,
 } from '@/features/reports/types/index.types';
 import { useDocumentTitle } from '@/hooks/use-title';
+import { useProjects } from '@/features/admin/hooks/projects/use-projects';
 
 export default function ExpensesReportPage() {
   useDocumentTitle('Expenses Report');
@@ -71,11 +72,12 @@ function Actions({ onSetReportValues }: ActionProps) {
   const setParams = useSetParams();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { expenseAccounts, isLoadingAccounts, accountsError } = useAccounts();
+  const { isLoadingProjects, projects, projectsError } = useProjects();
 
   const form = useForm<ExpenseReportFormValues>({
     defaultValues: {
       reportType: 'all',
-      // projectId: '',
+      projectId: '',
     },
     resolver: zodResolver(expensesReportSchema),
   });
@@ -91,7 +93,7 @@ function Actions({ onSetReportValues }: ActionProps) {
       ...values,
     };
     if (values.reportType === 'all') {
-      // delete reportParams.projectId;
+      delete reportParams.projectId;
       delete reportParams.accountId;
     }
 
@@ -107,8 +109,8 @@ function Actions({ onSetReportValues }: ActionProps) {
     );
     onSetReportValues({
       ...reportParams,
-      // projectId:
-      //   values.reportType === 'by-project' ? values.projectId : undefined,
+      projectId:
+        values.reportType === 'by-project' ? values.projectId : undefined,
       accountId:
         values.reportType === 'by-account' ? values.accountId : undefined,
     });
@@ -116,9 +118,15 @@ function Actions({ onSetReportValues }: ActionProps) {
 
   return (
     <div className="space-y-2">
-      {accountsError && <ErrorAlert error={accountsError.message} />}
+      {(accountsError || projectsError) && (
+        <ErrorAlert
+          error={
+            accountsError?.message || projectsError?.message || 'Some message'
+          }
+        />
+      )}
       <form onSubmit={form.handleSubmit(onSubmit)} className="form-grid">
-        <div className="col-span-full md:col-span-4 self-end space-y-1">
+        <div className="col-span-full md:col-span-3 self-end space-y-1">
           <DateRangePicker
             date={date}
             onSetDate={setRange}
@@ -128,7 +136,7 @@ function Actions({ onSetReportValues }: ActionProps) {
             <CustomFormMessage message="Select date range" />
           )}
         </div>
-        <FormGroup className="space-y-1 col-span-full md:col-span-4">
+        <FormGroup className="space-y-1 col-span-full md:col-span-3">
           <Label className="text-xs text-muted-foreground font-normal">
             Report Type
           </Label>
@@ -155,26 +163,53 @@ function Actions({ onSetReportValues }: ActionProps) {
         {isLoadingAccounts ? (
           <FormFieldLoading
             label="Expense Account"
-            className="col-span-full md:col-span-4"
+            className="col-span-full md:col-span-3"
           />
         ) : (
-          <FormGroup className="space-y-1 col-span-full md:col-span-4">
+          <FormGroup className="space-y-1 col-span-full md:col-span-3">
             <Label className="text-xs text-muted-foreground font-normal">
               Expense Account
             </Label>
             <div className="space-y-1">
               <CustomSearchSelect
                 options={expenseAccounts}
-                disabled={form.watch('reportType') === 'all'}
+                disabled={form.watch('reportType') !== 'by-account'}
                 onChange={value => form.setValue('accountId', +value)}
                 value={
-                  form.watch('reportType') === 'all'
+                  form.watch('reportType') !== 'by-account'
                     ? undefined
                     : form.watch('accountId')?.toString()
                 }
               />
               {errors?.accountId?.message && (
                 <CustomFormMessage message={errors.accountId.message} />
+              )}
+            </div>
+          </FormGroup>
+        )}
+        {isLoadingProjects ? (
+          <FormFieldLoading
+            label="Project"
+            className="col-span-full md:col-span-3"
+          />
+        ) : (
+          <FormGroup className="space-y-1 col-span-full md:col-span-3">
+            <Label className="text-xs text-muted-foreground font-normal">
+              Project
+            </Label>
+            <div className="space-y-1">
+              <CustomSearchSelect
+                options={projects}
+                disabled={form.watch('reportType') !== 'by-project'}
+                onChange={value => form.setValue('projectId', value)}
+                value={
+                  form.watch('reportType') !== 'by-project'
+                    ? undefined
+                    : form.watch('projectId')?.toString()
+                }
+              />
+              {errors?.projectId?.message && (
+                <CustomFormMessage message={errors.projectId.message} />
               )}
             </div>
           </FormGroup>
