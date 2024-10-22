@@ -28,8 +28,7 @@ export async function fetchExpensesReport(values: ExpenseParamValues) {
     fdate: dateFormat(values.from),
     tdate: dateFormat(values.to),
     rtype: values.reportType,
-    // pid: values?.projectId,
-    pid: undefined,
+    pid: values?.projectId,
     accid: values?.accountId,
   });
   if (error) throw new Error(error.message);
