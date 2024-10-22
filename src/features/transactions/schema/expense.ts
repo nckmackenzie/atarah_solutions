@@ -16,6 +16,7 @@ export const expenseFormSchema = z
       invalid_type_error: 'Invalid payment method selected.',
     }),
     paymentReference: z.string().trim().optional(),
+    projectId: z.string().optional(),
     details: z.array(
       z.object({
         id: z.string(),
