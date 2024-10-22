@@ -44,3 +44,7 @@ export const compactNumberFormatter = (value: string | number) => {
     maximumFractionDigits: 2,
   }).format(Number(value));
 };
+
+export const fileSuffix = () => {
+  return format(new Date(), 'ddMMyyyyhhmmss');
+};

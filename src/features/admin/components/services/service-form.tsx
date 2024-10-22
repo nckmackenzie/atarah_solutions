@@ -21,16 +21,20 @@ import { useFormReset } from '@/hooks/use-form-reset';
 import { useMutate } from '@/hooks/use-mutate';
 import { createService, updateService } from '@/features/admin/api/service';
 import { useError } from '@/hooks/use-error';
+import { useAccounts } from '@/features/admin/hooks/accounts/use-accounts';
 import type { IsEditRequired } from '@/types/index.types';
 import type {
   ServiceFormValues,
   Service,
 } from '@/features/admin/types/service';
+import CustomSearchSelect from '@/components/ui/custom-select';
+import FormFieldLoading from '@/components/ui/form-field-loading';
 
 interface ServiceFormProps extends IsEditRequired {
   data?: Service;
 }
 export default function ServiceForm({ isEdit, data }: ServiceFormProps) {
+  const { accounts, isLoadingAccounts, accountsError } = useAccounts();
   const form = useForm<ServiceFormValues>({
     defaultValues: {
       description: '',
@@ -67,7 +71,10 @@ export default function ServiceForm({ isEdit, data }: ServiceFormProps) {
 
   return (
     <div className="y-spacing">
-      {errors && <ErrorAlert error={errors} />}
+      {errors ||
+        (accountsError && (
+          <ErrorAlert error={errors || accountsError?.message} />
+        ))}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
@@ -105,7 +112,6 @@ export default function ServiceForm({ isEdit, data }: ServiceFormProps) {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="description"
@@ -123,6 +129,28 @@ export default function ServiceForm({ isEdit, data }: ServiceFormProps) {
               </FormItem>
             )}
           />
+          {isLoadingAccounts ? (
+            <FormFieldLoading label="G/L Account" />
+          ) : (
+            <FormField
+              control={form.control}
+              name="accountId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>G/L Account</FormLabel>
+                  <FormControl>
+                    <CustomSearchSelect
+                      options={accounts
+                        .filter(acc => acc.parentId !== null)
+                        .map(acc => ({ label: acc.label, value: acc.value }))}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
           {isEdit && (
             <FormField

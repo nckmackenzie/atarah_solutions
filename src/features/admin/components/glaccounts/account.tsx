@@ -47,7 +47,7 @@ export default function GlAccountsForm({ isEdit, data }: GlAccountsFormProps) {
   const form = useForm<GlAccountFormValues>({
     defaultValues: {
       name: '',
-      accountTypeId: '',
+      isSubcategory: false,
       active: true,
     },
     resolver: zodResolver(glAccountSchema),
@@ -61,7 +61,7 @@ export default function GlAccountsForm({ isEdit, data }: GlAccountsFormProps) {
           accountTypeId: data.accountTypeId ?? undefined,
           active: data.active,
           isSubcategory: data.isSubCategory,
-          parentId: data.parentId || '',
+          parentId: data.parentId || undefined,
         });
       }
     },
@@ -69,7 +69,7 @@ export default function GlAccountsForm({ isEdit, data }: GlAccountsFormProps) {
   );
 
   const parentAccounts = accounts?.filter(
-    acc => acc.parentId === form.watch('accountTypeId')
+    acc => acc.parentId === Number(form.watch('accountTypeId'))
   );
 
   function onSubmit(values: GlAccountFormValues) {
@@ -114,11 +114,11 @@ export default function GlAccountsForm({ isEdit, data }: GlAccountsFormProps) {
                   <FormControl>
                     <CustomSearchSelect
                       options={accountTypes}
-                      value={field.value}
+                      value={field.value?.toString()}
                       enableClear={false}
                       onChange={(value: string) => {
                         field.onChange(value);
-                        form.setValue('parentId', '');
+                        form.setValue('parentId', undefined);
                         form.trigger('parentId');
                       }}
                     />
@@ -162,7 +162,7 @@ export default function GlAccountsForm({ isEdit, data }: GlAccountsFormProps) {
                   <FormControl>
                     <CustomSearchSelect
                       options={parentAccounts}
-                      value={field.value}
+                      value={field.value?.toString()}
                       onChange={field.onChange}
                       disabled={!form.watch('isSubcategory')}
                     />

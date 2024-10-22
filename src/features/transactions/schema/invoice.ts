@@ -29,6 +29,7 @@ export const invoiceFormSchema = z
           required_error: 'Rate is required',
           invalid_type_error: 'Rate must be a number',
         }),
+        accountId: z.coerce.number(),
       })
     ),
   })

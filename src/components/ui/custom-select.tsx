@@ -19,7 +19,7 @@ export default function CustomSearchSelect({
   disabled,
   value,
   placeholder,
-  enableClear = true,
+  enableClear = false,
 }: CustomSearchSelectProps) {
   return (
     <SearchSelect

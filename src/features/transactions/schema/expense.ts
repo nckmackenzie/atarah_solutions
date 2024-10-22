@@ -20,10 +20,10 @@ export const expenseFormSchema = z
     details: z.array(
       z.object({
         id: z.string(),
-        accountId: z
-          .string({ required_error: 'Account is required' })
-          .trim()
-          .min(1, 'Account is required'),
+        accountId: z.coerce.number({
+          required_error: 'Account is required',
+          invalid_type_error: 'Account must be a number',
+        }),
         amount: z.coerce
           .number({
             required_error: 'Amount is required',

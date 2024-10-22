@@ -50,21 +50,21 @@ export type Database = {
       }
       expenses_details: {
         Row: {
-          accountId: string
+          accountId: number
           amount: number
           headerId: string
           id: number
           narration: string | null
         }
         Insert: {
-          accountId: string
+          accountId: number
           amount: number
           headerId: string
           id?: number
           narration?: string | null
         }
         Update: {
-          accountId?: string
+          accountId?: number
           amount?: number
           headerId?: string
           id?: number
@@ -75,7 +75,7 @@ export type Database = {
             foreignKeyName: "expenses_details_accountId_fkey"
             columns: ["accountId"]
             isOneToOne: false
-            referencedRelation: "glaccounts"
+            referencedRelation: "gl_accounts"
             referencedColumns: ["id"]
           },
           {
@@ -103,6 +103,7 @@ export type Database = {
           payee: string
           paymentMethod: Database["public"]["Enums"]["payment_type"]
           paymentReference: string | null
+          projectId: string | null
         }
         Insert: {
           createdAt?: string
@@ -112,6 +113,7 @@ export type Database = {
           payee: string
           paymentMethod: Database["public"]["Enums"]["payment_type"]
           paymentReference?: string | null
+          projectId?: string | null
         }
         Update: {
           createdAt?: string
@@ -121,8 +123,17 @@ export type Database = {
           payee?: string
           paymentMethod?: Database["public"]["Enums"]["payment_type"]
           paymentReference?: string | null
+          projectId?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "expenses_headers_projectId_fkey"
+            columns: ["projectId"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       forms: {
         Row: {
@@ -151,49 +162,44 @@ export type Database = {
         }
         Relationships: []
       }
-      glaccounts: {
+      gl_accounts: {
         Row: {
           accountName: string
           accountNo: string | null
-          accountTypeId: string | null
+          accountTypeId: number | null
           active: boolean
-          created_at: string
-          id: string
+          createdAt: string
+          editable: boolean | null
+          id: number
           isBank: boolean
           isSubCategory: boolean
-          parentId: string | null
+          parentId: number | null
         }
         Insert: {
           accountName: string
           accountNo?: string | null
-          accountTypeId?: string | null
+          accountTypeId?: number | null
           active?: boolean
-          created_at?: string
-          id?: string
+          createdAt?: string
+          editable?: boolean | null
+          id?: number
           isBank?: boolean
           isSubCategory?: boolean
-          parentId?: string | null
+          parentId?: number | null
         }
         Update: {
           accountName?: string
           accountNo?: string | null
-          accountTypeId?: string | null
+          accountTypeId?: number | null
           active?: boolean
-          created_at?: string
-          id?: string
+          createdAt?: string
+          editable?: boolean | null
+          id?: number
           isBank?: boolean
           isSubCategory?: boolean
-          parentId?: string | null
+          parentId?: number | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "glaccounts_parentId_fkey"
-            columns: ["parentId"]
-            isOneToOne: false
-            referencedRelation: "glaccounts"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       invoice_details: {
         Row: {
@@ -397,6 +403,51 @@ export type Database = {
           },
         ]
       }
+      ledger: {
+        Row: {
+          account: string
+          accountTypeId: number | null
+          credit: number
+          debit: number
+          id: number
+          isJournal: boolean
+          journalNo: number | null
+          narration: string | null
+          parentAccount: string | null
+          transactionDate: string
+          transactionId: string | null
+          transactionType: string
+        }
+        Insert: {
+          account: string
+          accountTypeId?: number | null
+          credit?: number
+          debit?: number
+          id?: number
+          isJournal?: boolean
+          journalNo?: number | null
+          narration?: string | null
+          parentAccount?: string | null
+          transactionDate: string
+          transactionId?: string | null
+          transactionType: string
+        }
+        Update: {
+          account?: string
+          accountTypeId?: number | null
+          credit?: number
+          debit?: number
+          id?: number
+          isJournal?: boolean
+          journalNo?: number | null
+          narration?: string | null
+          parentAccount?: string | null
+          transactionDate?: string
+          transactionId?: string | null
+          transactionType?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           active: Database["public"]["Enums"]["user_status_type"] | null
@@ -419,18 +470,35 @@ export type Database = {
           id?: string
           username?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "profiles_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          active: boolean
+          createdAt: string
+          description: string | null
+          id: string
+          projectName: string
+        }
+        Insert: {
+          active?: boolean
+          createdAt?: string
+          description?: string | null
+          id?: string
+          projectName: string
+        }
+        Update: {
+          active?: boolean
+          createdAt?: string
+          description?: string | null
+          id?: string
+          projectName?: string
+        }
+        Relationships: []
       }
       services: {
         Row: {
+          accountId: number
           active: boolean
           createdAt: string
           description: string | null
@@ -439,6 +507,7 @@ export type Database = {
           serviceRate: number
         }
         Insert: {
+          accountId: number
           active?: boolean
           createdAt?: string
           description?: string | null
@@ -447,6 +516,7 @@ export type Database = {
           serviceRate: number
         }
         Update: {
+          accountId?: number
           active?: boolean
           createdAt?: string
           description?: string | null
@@ -454,7 +524,15 @@ export type Database = {
           serviceName?: string
           serviceRate?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "services_accountId_fkey"
+            columns: ["accountId"]
+            isOneToOne: false
+            referencedRelation: "gl_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -466,6 +544,7 @@ export type Database = {
           id: string | null
           payee: string | null
           paymentMethod: Database["public"]["Enums"]["payment_type"] | null
+          paymentReference: string | null
         }
         Insert: {
           amount?: never
@@ -474,6 +553,7 @@ export type Database = {
           id?: string | null
           payee?: string | null
           paymentMethod?: Database["public"]["Enums"]["payment_type"] | null
+          paymentReference?: string | null
         }
         Update: {
           amount?: never
@@ -482,11 +562,54 @@ export type Database = {
           id?: string | null
           payee?: string | null
           paymentMethod?: Database["public"]["Enums"]["payment_type"] | null
+          paymentReference?: string | null
         }
         Relationships: []
       }
     }
     Functions: {
+      get_account_details: {
+        Args: {
+          accid: number
+        }
+        Returns: {
+          accountname: string
+          accounttypeid: number
+          parent: string
+        }[]
+      }
+      get_client_statement: {
+        Args: {
+          client: string
+          from_date: string
+          to_date: string
+        }
+        Returns: {
+          date: string
+          reference: string
+          debit: number
+          credit: number
+          balance: number
+        }[]
+      }
+      get_expenses_report: {
+        Args: {
+          fdate: string
+          tdate: string
+          rtype: string
+          accid?: number
+          pid?: string
+        }
+        Returns: {
+          expenseDate: string
+          accountName: string
+          payee: string
+          paymentMethod: Database["public"]["Enums"]["payment_type"]
+          paymentReference: string
+          projectName: string
+          amount: number
+        }[]
+      }
       get_invoice_bal: {
         Args: {
           invoice_id: string
@@ -524,6 +647,33 @@ export type Database = {
           level_id: number
         }
         Returns: number
+      }
+      get_outstanding_invoices: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          name: string
+          invoiceNo: number
+          invoiceDate: string
+          inclusiveAmount: number
+          balance: number
+          dueDate: string
+          dif: number
+        }[]
+      }
+      get_payment_report: {
+        Args: {
+          fdate: string
+          tdate: string
+          rtype: string
+          cid?: string
+        }
+        Returns: {
+          paymentDate: string
+          name: string
+          paymentMethod: Database["public"]["Enums"]["payment_type"]
+          paymentReference: string
+          totalAmount: number
+        }[]
       }
       verify_user_password: {
         Args: {
@@ -624,4 +774,19 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema["CompositeTypes"]
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
+    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never

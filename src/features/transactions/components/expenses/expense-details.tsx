@@ -38,7 +38,7 @@ export default function ExpenseDetails({
         onClick={() =>
           append({
             id: new Date().getTime().toString(),
-            accountId: '',
+            accountId: 0,
             amount: 0,
             narration: '',
           })
@@ -61,6 +61,7 @@ export default function ExpenseDetails({
                     <CustomSearchSelect
                       enableClear={false}
                       {...field}
+                      value={field.value?.toString()}
                       options={expenseAccounts}
                       disabled={isPending}
                     />
