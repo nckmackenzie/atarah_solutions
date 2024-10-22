@@ -14,7 +14,9 @@ export async function fetchServices(query?: string) {
   return data;
 }
 export async function createService(values: ServiceFormValues) {
-  const { error } = await supabase.from('services').insert({ ...values });
+  const { error } = await supabase
+    .from('services')
+    .insert({ ...values, accountId: +values.accountId });
 
   if (error) throw new Error(error.message);
 }
@@ -34,7 +36,7 @@ export async function fetchService(id: string) {
 export async function updateService(id: string, values: ServiceFormValues) {
   const { error } = await supabase
     .from('services')
-    .update({ ...values })
+    .update({ ...values, accountId: +values.accountId })
     .eq('id', id);
 
   if (error) throw new Error(error.message);
