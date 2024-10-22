@@ -17,6 +17,7 @@ import ExpenseDetails from '@/features/transactions/components/expenses/expense-
 import { ErrorAlert } from '@/components/ui/custom-alert';
 import { Button } from '@/components/ui/button';
 import DocumentNo from '@/components/ui/document-no';
+import FormFieldLoading from '@/components/ui/form-field-loading';
 
 import { expenseFormSchema } from '@/features/transactions/schema/expense';
 import { PAYMENT_METHODS } from '@/features/transactions/lib/constants';
@@ -30,6 +31,7 @@ import {
   updateExpense,
 } from '@/features/transactions/api/expense';
 import { useMutate } from '@/hooks/use-mutate';
+import { useProjects } from '@/features/admin/hooks/projects/use-projects';
 import type { IsEditRequired } from '@/types/index.types';
 import type {
   Expense,
@@ -47,12 +49,14 @@ export default function ExpenseForm({ isEdit, data }: ExpenseFormProps) {
       payee: '',
       paymentMethod: 'mpesa',
       paymentReference: '',
+      projectId: '',
     },
     resolver: zodResolver(expenseFormSchema),
   });
 
   const reset = useFormReset<ExpenseFormValues>();
   const { clearErrors, errors, onError } = useError();
+  const { isLoadingProjects, projects, projectsError } = useProjects();
   const { docNumberError, documentNo, isFetchingNo } = useDocumentNumbers(
     'expense no',
     fetchExpenseNo
@@ -70,6 +74,7 @@ export default function ExpenseForm({ isEdit, data }: ExpenseFormProps) {
           payee: data.payee,
           paymentMethod: data.paymentMethod,
           paymentReference: data.paymentReference,
+          projectId: data.projectId,
           details: data.details.map(detail => ({
             accountId: detail.accountId,
             amount: detail.amount,
@@ -93,9 +98,14 @@ export default function ExpenseForm({ isEdit, data }: ExpenseFormProps) {
 
   return (
     <div className="y-spacing">
-      {(errors || docNumberError) && (
+      {(errors || docNumberError || projectsError) && (
         <ErrorAlert
-          error={errors || docNumberError?.message || 'Something went wrong'}
+          error={
+            errors ||
+            docNumberError?.message ||
+            projectsError?.message ||
+            'Something went wrong'
+          }
         />
       )}
       <DocumentNo
@@ -176,6 +186,27 @@ export default function ExpenseForm({ isEdit, data }: ExpenseFormProps) {
               </FormItem>
             )}
           />
+          {isLoadingProjects ? (
+            <FormFieldLoading label="Project" className="form-col" />
+          ) : (
+            <FormField
+              control={form.control}
+              name="projectId"
+              render={({ field }) => (
+                <FormItem className="form-col">
+                  <FormLabel>Project</FormLabel>
+                  <FormControl>
+                    <CustomSearchSelect
+                      enableClear={false}
+                      options={projects}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
           <Separator className="col-span-full" />
           <ExpenseDetails form={form} isPending={isPending} />
           <div className="col-span-full space-x-2">

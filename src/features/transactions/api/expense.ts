@@ -38,6 +38,7 @@ export async function createExpense(values: ExpenseFormValues) {
       expenseNo,
       payee: values.payee.toLowerCase(),
       paymentMethod: values.paymentMethod,
+      projectId: values.projectId,
       paymentReference: values?.paymentReference?.toLowerCase(),
     })
     .select('id')
@@ -104,6 +105,7 @@ export async function fetchExpense(id: string) {
     id: data.id,
     expenseDate: new Date(data.expenseDate),
     expenseNo: data.expenseNo,
+    projectId: data.projectId ?? undefined,
     payee: data.payee,
     paymentMethod: data.paymentMethod,
     paymentReference: data.paymentReference ?? undefined,
@@ -127,6 +129,7 @@ export async function updateExpense(id: string, values: ExpenseFormValues) {
       payee: values.payee.toLowerCase(),
       paymentMethod: values.paymentMethod,
       paymentReference: values?.paymentReference?.toLowerCase(),
+      projectId: values.projectId,
     })
     .eq('id', id);
   if (error) throw new Error(error.message);
