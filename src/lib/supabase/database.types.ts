@@ -592,6 +592,16 @@ export type Database = {
           balance: number
         }[]
       }
+      get_expenses: {
+        Args: {
+          sdate: string
+          edate: string
+        }
+        Returns: {
+          parentAccount: string
+          credit: number
+        }[]
+      }
       get_expenses_report: {
         Args: {
           fdate: string
@@ -673,6 +683,16 @@ export type Database = {
           paymentMethod: Database["public"]["Enums"]["payment_type"]
           paymentReference: string
           totalAmount: number
+        }[]
+      }
+      get_revenues: {
+        Args: {
+          sdate: string
+          edate: string
+        }
+        Returns: {
+          parentAccount: string
+          credit: number
         }[]
       }
       verify_user_password: {
