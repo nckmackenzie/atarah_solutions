@@ -4,6 +4,7 @@ import {
   fetchClientStatement,
   fetchCollectedPayments,
   fetchExpensesReport,
+  fetchIncomeStatement,
   fetchOutstandingInvoices,
 } from '@/features/reports/api';
 import {
@@ -12,7 +13,7 @@ import {
   paymentReportSchema,
 } from '@/features/reports/schema';
 
-type ReportDates = {
+export type ReportDates = {
   from: string;
   to: string;
 };
@@ -41,3 +42,5 @@ export type ClientStatementParamValues = ReportDates &
 export type ClientStatementItem = Awaited<
   ReturnType<typeof fetchClientStatement>
 >[number];
+
+export type IncomeStatement = Awaited<ReturnType<typeof fetchIncomeStatement>>;
