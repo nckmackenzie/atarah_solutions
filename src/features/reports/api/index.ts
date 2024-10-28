@@ -1,8 +1,9 @@
 import { supabase } from '@/lib/supabase/supabase';
-import {
+import type {
   ClientStatementParamValues,
   ExpenseParamValues,
   PaymentCollectionValues,
+  ReportDates,
 } from '@/features/reports/types/index.types';
 import { dateFormat } from '@/lib/formatters';
 
@@ -45,4 +46,28 @@ export async function fetchClientStatement(values: ClientStatementParamValues) {
   if (error) throw new Error(error.message);
 
   return data;
+}
+
+export async function fetchIncomeStatement(values: ReportDates) {
+  const { data: expenses, error: expenseError } = await supabase.rpc(
+    'get_expenses',
+    {
+      sdate: dateFormat(values.from),
+      edate: dateFormat(values.to),
+    }
+  );
+
+  if (expenseError) throw new Error(expenseError.message);
+
+  const { data: incomes, error: incomeError } = await supabase.rpc(
+    'get_revenues',
+    {
+      sdate: dateFormat(values.from),
+      edate: dateFormat(values.to),
+    }
+  );
+
+  if (incomeError) throw new Error(incomeError.message);
+
+  return { incomes, expenses };
 }
