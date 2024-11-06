@@ -36,7 +36,7 @@ export default function ProfileDetailsForm() {
     defaultValues: {
       contact: user?.user_metadata.contact || '',
       email: user?.email || '',
-      name: user?.user_metadata.name.toUpperCase() || '',
+      name: user?.user_metadata?.name.toUpperCase() || '',
     },
     resolver: zodResolver(profileFormSchema),
   });
