@@ -38,7 +38,7 @@ export default function Sidebar() {
       <div className="h-full border-r">
         <div className="flex items-center justify-center border-b border-slate-100 dark:border-slate-900 h-14 ">
           <h1 className="text-lg font-semibold">
-            {import.meta.env.APP_NAME || 'APP NAME'}
+            {import.meta.env.VITE_APP_NAME || 'APP NAME'}
           </h1>
         </div>
         <div className="p-4">
