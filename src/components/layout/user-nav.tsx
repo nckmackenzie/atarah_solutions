@@ -51,7 +51,7 @@ export default function UserNav() {
           <Avatar className="w-8 h-8">
             <AvatarImage src="/user.png" alt="Avatar" />
             <AvatarFallback className="bg-transparent">
-              {user?.user_metadata.name
+              {user?.user_metadata?.name
                 ? getInitials(user.user_metadata.name)
                 : 'U'}
             </AvatarFallback>
