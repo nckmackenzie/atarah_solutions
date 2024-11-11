@@ -8,6 +8,7 @@ import {
   fetchInvoice,
   fetchInvoicePayments,
   fetchInvoicePayment,
+  fetchInvoiceWithDetails,
 } from '@/features/transactions/api/invoice';
 import { Database } from '@/lib/supabase/database.types';
 
@@ -22,3 +23,7 @@ export type InvoicePaymentRow = Awaited<
 >[number];
 
 export type InvoicePayment = Awaited<ReturnType<typeof fetchInvoicePayment>>;
+
+export type SingleInvoicePrintDetails = Awaited<
+  ReturnType<typeof fetchInvoiceWithDetails>
+>;
