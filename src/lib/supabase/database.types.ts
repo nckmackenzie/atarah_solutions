@@ -253,7 +253,7 @@ export type Database = {
           id: string
           inclusiveAmount: number | null
           invoiceDate: string
-          invoiceNo: number | null
+          invoiceNo: string | null
           isOpeningBal: boolean | null
           terms: number | null
           vat: number
@@ -269,7 +269,7 @@ export type Database = {
           id?: string
           inclusiveAmount?: number | null
           invoiceDate: string
-          invoiceNo?: number | null
+          invoiceNo?: string | null
           isOpeningBal?: boolean | null
           terms?: number | null
           vat?: number
@@ -285,7 +285,7 @@ export type Database = {
           id?: string
           inclusiveAmount?: number | null
           invoiceDate?: string
-          invoiceNo?: number | null
+          invoiceNo?: string | null
           isOpeningBal?: boolean | null
           terms?: number | null
           vat?: number
