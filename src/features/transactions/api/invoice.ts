@@ -32,7 +32,7 @@ export async function fetchServiceDetails(value: string) {
 }
 
 export async function createInvoice(values: InvoiceFormValues) {
-  const invoiceNo = await fetchInvoiceNo();
+  // const invoiceNo = await fetchInvoiceNo();
   const total = values.items.reduce(
     (acc, item) => acc + Number(item.rate) * Number(item.qty),
     0
@@ -43,7 +43,7 @@ export async function createInvoice(values: InvoiceFormValues) {
     .insert({
       clientId: values.clientId,
       invoiceDate: dateFormat(values.invoiceDate),
-      invoiceNo,
+      invoiceNo: values.invoiceNo,
       dueDate: dateFormat(values.dueDate),
       terms: values.terms,
       vatType: values.vatType,
@@ -173,6 +173,7 @@ export async function updateInvoice(id: string, values: InvoiceFormValues) {
   const { data, error } = await supabase
     .from('invoice_headers')
     .update({
+      invoiceNo: values.invoiceNo,
       clientId: values.clientId,
       invoiceDate: dateFormat(values.invoiceDate),
       dueDate: dateFormat(values.dueDate),
