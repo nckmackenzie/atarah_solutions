@@ -134,6 +134,35 @@ export async function fetchInvoice(id: string) {
   return data;
 }
 
+export async function fetchInvoiceWithDetails(id: string) {
+  const { data, error } = await supabase
+    .from('invoice_headers')
+    .select('*,invoice_details(*,services(serviceName)),clients(name)')
+    .eq('id', id)
+    .single();
+  if (error) throw new Error(error.message);
+
+  const formattedData = {
+    id: data.id,
+    invoiceNo: data.invoiceNo?.toString() as string,
+    invoiceDate: data.invoiceDate,
+    dueDate: data.dueDate,
+    client: data.clients?.name as string,
+    vat: data.vat,
+    exclusiveAmount: data.exclusiveAmount,
+    vatAmount: data.vatAmount,
+    inclusiveAmount: data.inclusiveAmount,
+    details: data.invoice_details.map(detail => ({
+      serviceName: detail.services?.serviceName as string,
+      qty: detail.qty,
+      rate: detail.rate,
+      amount: detail.qty * detail.rate,
+    })),
+  };
+
+  return formattedData;
+}
+
 export async function updateInvoice(id: string, values: InvoiceFormValues) {
   const total = values.items.reduce(
     (acc, item) => acc + Number(item.rate) * Number(item.qty),
