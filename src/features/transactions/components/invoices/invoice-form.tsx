@@ -15,7 +15,7 @@ import {
 import CustomSearchSelect from '@/components/ui/custom-select';
 import { ErrorAlert } from '@/components/ui/custom-alert';
 import FormFieldLoading from '@/components/ui/form-field-loading';
-import DocumentNo from '@/components/ui/document-no';
+// import DocumentNo from '@/components/ui/document-no';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import InvoiceItems from './invoice-items';
@@ -24,11 +24,11 @@ import Totals from '@/features/transactions/components/invoices/totals';
 
 import { invoiceFormSchema } from '@/features/transactions/schema/invoice';
 import { useClients } from '@/features/admin/hooks/clients/use-clients';
-import { useDocumentNumbers } from '@/hooks/use-document-number';
+// import { useDocumentNumbers } from '@/hooks/use-document-number';
 import {
   createInvoice,
   fetchInvoice,
-  fetchInvoiceNo,
+  // fetchInvoiceNo,
   updateInvoice,
 } from '@/features/transactions/api/invoice';
 import { TERMS, VAT_TYPES } from '@/features/transactions/lib/constants';
@@ -74,10 +74,10 @@ export default function InvoiceForm({ isEdit, data }: InvoiceFormProps) {
     resolver: zodResolver(invoiceFormSchema),
   });
   const { clients, errorClients, isLoadingClients } = useClients();
-  const { docNumberError, documentNo, isFetchingNo } = useDocumentNumbers(
-    'invoice no',
-    fetchInvoiceNo
-  );
+  // const { docNumberError, documentNo, isFetchingNo } = useDocumentNumbers(
+  //   'invoice no',
+  //   fetchInvoiceNo
+  // );
   const { clearErrors, errors, onError } = useError();
   const { isPending, mutate } = useMutate(createInvoice, updateInvoice, {
     queryKey: 'invoices',
@@ -153,12 +153,11 @@ export default function InvoiceForm({ isEdit, data }: InvoiceFormProps) {
 
   return (
     <div className="y-spacing">
-      {(errorClients || docNumberError || errors || error) && (
+      {(errorClients || errors || error) && (
         <ErrorAlert
           error={
             errors ||
             errorClients?.message ||
-            docNumberError?.message ||
             error?.message ||
             'Error fetching'
           }
@@ -166,12 +165,25 @@ export default function InvoiceForm({ isEdit, data }: InvoiceFormProps) {
       )}
       <Form {...form}>
         <form className="form-grid" onSubmit={form.handleSubmit(onSubmit)}>
-          <DocumentNo
+          <FormField
+            control={form.control}
+            name="invoiceNo"
+            render={({ field }) => (
+              <FormItem className="col-span-full sm:col-span-4">
+                <FormLabel>Invoice No</FormLabel>
+                <FormControl>
+                  <Input {...field} disabled={isPending} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {/* <DocumentNo
             documentNumber={data?.invoiceNo || documentNo || 1001}
             isLoading={isFetchingNo}
             label="Invoice No"
             className="col-span-full sm:col-span-4"
-          />
+          /> */}
           {isLoadingClients ? (
             <FormFieldLoading
               className="col-span-full sm:col-span-4"
