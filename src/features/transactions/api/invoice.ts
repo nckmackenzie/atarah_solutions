@@ -153,6 +153,7 @@ export async function fetchInvoiceWithDetails(id: string) {
     vatAmount: data.vatAmount,
     inclusiveAmount: data.inclusiveAmount,
     details: data.invoice_details.map(detail => ({
+      id: detail.id,
       serviceName: detail.services?.serviceName as string,
       qty: detail.qty,
       rate: detail.rate,
