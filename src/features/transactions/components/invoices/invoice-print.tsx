@@ -14,6 +14,7 @@ import {
 import { dummyArray } from '@/lib/utils';
 import { numberFormat } from '@/lib/formatters';
 import type { SingleInvoicePrintDetails } from '@/features/transactions/types/invoice.types';
+import { Separator } from '@/components/ui/separator';
 
 interface InvoicePrintProps {
   details: SingleInvoicePrintDetails;
@@ -191,11 +192,15 @@ function Notes() {
       </p>
       <p className="font-semibold">ACCOUNT NO: 01192952546400</p>
       <p className="font-semibold">BANK NAME: CO-OPERATIVE BANK</p>
-      <p className="font-semibold">ACCOUNT NO: 01192952546400</p>
       <p className="font-semibold">BRANCH: ENTERPRISE ROAD</p>
+      <Separator />
+      <p className="font-semibold">PIN NO: P051802048C</p>
       <p className="text-sm text-muted-foreground">
         If you have any questions regarding this invoice, please contact us at{' '}
         <span className="font-semibold">grace@atarahsolutions.co.ke</span>
+      </p>
+      <p className="text-sm text-center text-muted-foreground">
+        Thank you for your business.
       </p>
     </div>
   );
