@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { Printer } from 'lucide-react';
+import { FileText, Printer } from 'lucide-react';
 
 import ContentWrapper from '@/components/layout/content-wrapper';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,7 @@ import InvoicePrint from '@/features/transactions/components/invoices/invoice-pr
 import { useDocumentTitle } from '@/hooks/use-title';
 import { useFetchSingle } from '@/hooks/use-fetch-single';
 import { fetchInvoiceWithDetails } from '@/features/transactions/api/invoice';
+import usePdfConverter from '@/hooks/use-pdf';
 
 export default function PrintInvoicePage() {
   useDocumentTitle('Print Invoice');
@@ -18,6 +19,10 @@ export default function PrintInvoicePage() {
     fetchInvoiceWithDetails
   );
   const printRef = useRef<HTMLDivElement>(null);
+  const { convertToPdf, isConverting } = usePdfConverter(
+    'print-document',
+    `Invoice-${data?.invoiceNo || ''}`
+  );
 
   if (isLoading) return <PageLoader loaderText="Fetching invoice details" />;
 
@@ -74,18 +79,22 @@ export default function PrintInvoicePage() {
     <ContentWrapper>
       <div className="space-y-4">
         <div className="space-x-2">
-          <Button onClick={handlePrint}>
+          <Button onClick={handlePrint} disabled={isConverting}>
             <Printer className="icon mr-2" />
             <span>Print</span>
           </Button>
-          {/* <Button variant="destructive">
+          <Button
+            variant="destructive"
+            disabled={isConverting}
+            onClick={convertToPdf}
+          >
             <FileText className="icon mr-2" />
             <span>PDF</span>
-          </Button> */}
+          </Button>
         </div>
         {error && <ErrorAlert error={error.message} />}
         <div className="max-w-5xl">
-          <div className="p4" id="print-document space-y-4" ref={printRef}>
+          <div className="p4" id="print-document" ref={printRef}>
             <InvoicePrint details={data} />
           </div>
         </div>
