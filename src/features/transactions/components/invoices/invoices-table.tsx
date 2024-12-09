@@ -40,15 +40,15 @@ export default function InvoicesTable({ data }: InvoicesTableProps) {
         </div>
       ),
     },
-    {
-      accessorKey: 'duedate',
-      header: 'Due Date',
-      cell: ({ row }) => (
-        <div className="row-font">
-          {formatDateLong(row.original.duedate || new Date())}
-        </div>
-      ),
-    },
+    // {
+    //   accessorKey: 'duedate',
+    //   header: 'Due Date',
+    //   cell: ({ row }) => (
+    //     <div className="row-font">
+    //       {formatDateLong(row.original.duedate || new Date())}
+    //     </div>
+    //   ),
+    // },
     {
       accessorKey: 'clientname',
       header: 'Client',
