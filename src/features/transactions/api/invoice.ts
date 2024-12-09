@@ -126,7 +126,7 @@ export async function fetchInvoices(query?: string) {
 export async function fetchInvoice(id: string) {
   const { data, error } = await supabase
     .from('invoice_headers')
-    .select('*,invoice_details(*)')
+    .select('*,invoice_details(*,services(accountId))')
     .eq('id', id)
     .single();
   if (error) throw new Error(error.message);

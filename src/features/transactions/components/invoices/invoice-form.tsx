@@ -116,6 +116,7 @@ export default function InvoiceForm({ isEdit, data }: InvoiceFormProps) {
             serviceId: item.serviceId,
             qty: item.qty,
             rate: item.rate,
+            accountId: item.services?.accountId,
           })),
         });
       }
@@ -137,6 +138,7 @@ export default function InvoiceForm({ isEdit, data }: InvoiceFormProps) {
             serviceId: item.serviceId,
             qty: item.qty,
             rate: item.rate,
+            accountId: item.services?.accountId,
           })),
         });
       }
@@ -150,6 +152,8 @@ export default function InvoiceForm({ isEdit, data }: InvoiceFormProps) {
   }
 
   if (isLoading) return <PageLoader loaderText="Fetching cloned data..." />;
+
+  console.log(form.formState.errors);
 
   return (
     <div className="y-spacing">
