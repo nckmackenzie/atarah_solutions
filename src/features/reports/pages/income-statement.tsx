@@ -88,7 +88,7 @@ function IncomeStatementTable({ data }: { data: IncomeStatement }) {
   );
   const profitLoss = revenueTotal - expenseTotal;
   return (
-    <Table className="w-full md:w-1/3 mx-auto">
+    <Table className="w-full md:w-1/2 mx-auto">
       <TableHeader className="bg-secondary">
         <TableRow>
           <TableHead colSpan={2}>Income Statement</TableHead>
