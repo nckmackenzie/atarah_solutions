@@ -632,7 +632,7 @@ export type Database = {
         }
         Returns: {
           id: string
-          invoiceno: number
+          invoiceno: string
           duedate: string
           invoiceamount: number
           invoicebalance: number
@@ -644,7 +644,7 @@ export type Database = {
         }
         Returns: {
           id: string
-          invoiceno: number
+          invoiceno: string
           invoicedate: string
           duedate: string
           clientname: string
@@ -662,9 +662,9 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: {
           name: string
-          invoiceNo: number
+          invoiceNo: string
           invoiceDate: string
-          inclusiveAmount: number
+          exclusiveAmount: number
           balance: number
           dueDate: string
           dif: number
