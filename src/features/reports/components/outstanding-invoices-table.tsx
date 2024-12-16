@@ -2,7 +2,7 @@ import { type ColumnDef } from '@tanstack/react-table';
 
 import { Button } from '@/components/ui/button';
 import { DataTable } from '@/components/ui/datatable';
-import { OutstandingInvoice } from '@/features/reports/types/index.types';
+import { TableCell } from '@/components/ui/table';
 
 import { useExportExcel } from '@/hooks/use-export-excel';
 import {
@@ -10,7 +10,7 @@ import {
   formatDateReporting,
   numberFormat,
 } from '@/lib/formatters';
-import { TableCell } from '@/components/ui/table';
+import type { OutstandingInvoice } from '@/features/reports/types/index.types';
 
 interface OutstandingInvoicesTableProps {
   data: OutstandingInvoice[];
@@ -46,17 +46,17 @@ const columns: ColumnDef<OutstandingInvoice>[] = [
     ),
   },
   {
-    accessorKey: 'inclusiveAmount',
+    accessorKey: 'exclusiveAmount',
     header: () => <div className="text-right">Invoice Value</div>,
     cell: ({ row }) => (
       <div className="row-font text-right">
-        {numberFormat(row.original.inclusiveAmount)}
+        {numberFormat(row.original.exclusiveAmount)}
       </div>
     ),
   },
   {
     accessorKey: 'balance',
-    header: () => <div className="text-right">Invoice Balance</div>,
+    header: () => <div className="text-right">Balance(Inc VAT)</div>,
     cell: ({ row }) => (
       <div className="row-font text-right">
         {numberFormat(row.original.balance)}
@@ -70,12 +70,12 @@ export default function OutstandingInvoicesTable({
 }: OutstandingInvoicesTableProps) {
   const exportToExcel = useExportExcel(`outstanding_invoices_${fileSuffix()}`);
   const dataToExport = data.map(row => ({
-    'Invoice No': row.invoiceNo,
+    'Invoice No': `'${row.invoiceNo}`,
     'Invoice Date': formatDateReporting(row.invoiceDate),
     Client: row.name.toUpperCase(),
     'Due Date': formatDateReporting(row.dueDate),
-    'Invoice Value': numberFormat(row.inclusiveAmount),
-    'Invoice Balance': numberFormat(row.balance),
+    'Invoice Value': numberFormat(row.exclusiveAmount),
+    'Balance(Inc VAT)': numberFormat(row.balance),
   }));
   return (
     <div className="space-y-4">
@@ -92,7 +92,7 @@ export default function OutstandingInvoicesTable({
             <TableCell className="text-right">
               {numberFormat(
                 data.reduce(
-                  (acc, curr) => acc + Number(curr.inclusiveAmount),
+                  (acc, curr) => acc + Number(curr.exclusiveAmount),
                   0
                 )
               )}
