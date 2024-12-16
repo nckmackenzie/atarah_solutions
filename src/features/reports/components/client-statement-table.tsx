@@ -1,6 +1,8 @@
 import { type ColumnDef } from '@tanstack/react-table';
+import { FileText } from 'lucide-react';
 
 import { DataTable } from '@/components/ui/datatable';
+import { Button } from '@/components/ui/button';
 
 import type { ClientStatementItem } from '@/features/reports/types/index.types';
 import {
@@ -8,8 +10,8 @@ import {
   formatDateReporting,
   numberFormat,
 } from '@/lib/formatters';
-import { Button } from '@/components/ui/button';
 import { useExportExcel } from '@/hooks/use-export-excel';
+import usePdfConverter from '@/hooks/use-pdf';
 
 interface ClientStatementTableProps {
   data: ClientStatementItem[];
@@ -65,6 +67,10 @@ export default function ClientStatementTable({
   data,
 }: ClientStatementTableProps) {
   const exportToExcel = useExportExcel(`client_statement_${fileSuffix()}`);
+  const { convertToPdf, isConverting } = usePdfConverter(
+    'print-document',
+    `client-statement_${fileSuffix()}`
+  );
   const formattedData = data.map(row => ({
     Date: formatDateReporting(row.date),
     Reference: row.reference?.toUpperCase(),
@@ -74,10 +80,22 @@ export default function ClientStatementTable({
   }));
   return (
     <div className="space-y-4">
-      <Button variant="excel" onClick={() => exportToExcel(formattedData)}>
-        Export to Excel
-      </Button>
-      <DataTable data={data} columns={columns} />
+      <div className="-space-x-2">
+        <Button variant="excel" onClick={() => exportToExcel(formattedData)}>
+          Export to Excel
+        </Button>
+        <Button
+          variant="destructive"
+          disabled={isConverting}
+          onClick={convertToPdf}
+        >
+          <FileText className="icon mr-2" />
+          <span>PDF</span>
+        </Button>
+      </div>
+      <div id="print-document">
+        <DataTable data={data} columns={columns} />
+      </div>
     </div>
   );
 }
