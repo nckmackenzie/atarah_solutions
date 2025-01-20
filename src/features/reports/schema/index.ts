@@ -26,7 +26,7 @@ export const expensesReportSchema = z
     accountId: z.coerce.number().optional(),
   })
   .superRefine(({ reportType, projectId, accountId }, ctx) => {
-    if (reportType !== 'by-project' && !projectId) {
+    if (reportType === 'by-project' && !projectId) {
       ctx.addIssue({
         code: 'custom',
         path: ['projectId'],
