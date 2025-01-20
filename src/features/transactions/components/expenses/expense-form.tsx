@@ -49,7 +49,7 @@ export default function ExpenseForm({ isEdit, data }: ExpenseFormProps) {
       payee: '',
       paymentMethod: 'mpesa',
       paymentReference: '',
-      projectId: '',
+      projectId: undefined,
     },
     resolver: zodResolver(expenseFormSchema),
   });
@@ -93,7 +93,13 @@ export default function ExpenseForm({ isEdit, data }: ExpenseFormProps) {
       onError('Please add expense details');
       return;
     }
-    mutate(values, { onError: error => onError(error.message) });
+    mutate(
+      {
+        ...values,
+        projectId: values.projectId === '' ? undefined : values.projectId,
+      },
+      { onError: error => onError(error.message) }
+    );
   }
 
   return (
