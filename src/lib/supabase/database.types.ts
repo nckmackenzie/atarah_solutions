@@ -602,6 +602,17 @@ export type Database = {
           credit: number
         }[]
       }
+      get_expenses_detailed: {
+        Args: {
+          acc: string
+          sdate: string
+          edate: string
+        }
+        Returns: {
+          name: string
+          amount: number
+        }[]
+      }
       get_expenses_report: {
         Args: {
           fdate: string
@@ -691,8 +702,20 @@ export type Database = {
           edate: string
         }
         Returns: {
-          parentAccount: string
-          credit: number
+          id: string
+          account: string
+          amount: number
+        }[]
+      }
+      get_revenues_detailed: {
+        Args: {
+          account: string
+          sdate: string
+          edate: string
+        }
+        Returns: {
+          name: string
+          amount: number
         }[]
       }
       verify_user_password: {
