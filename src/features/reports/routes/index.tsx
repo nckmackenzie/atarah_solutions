@@ -4,11 +4,15 @@ import { type RouteObject } from 'react-router-dom';
 import {
   ClientStatementPage,
   CollectedPaymentsPage,
+  ExpensesDetailedPage,
   ExpensesReportPage,
   IncomeStatementPage,
   OutstandingInvoicesPage,
+  RevenueDetailedPage,
 } from '@/features/reports/routes/utils';
 import { PageLoader } from '@/components/ui/loaders';
+import { revenueDetailedPageLoader } from '@/features/reports/pages/revenue-detailed';
+import { expensesDetailedPageLoader } from '@/features/reports/pages/expense-detailed';
 
 export const reportRoutes: RouteObject[] = [
   {
@@ -48,11 +52,39 @@ export const reportRoutes: RouteObject[] = [
       },
       {
         path: 'income-statement',
-        element: (
-          <Suspense fallback={<PageLoader />}>
-            <IncomeStatementPage />
-          </Suspense>
-        ),
+        children: [
+          {
+            index: true,
+            element: (
+              <Suspense fallback={<PageLoader />}>
+                <IncomeStatementPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: 'revenue-detailed',
+            element: (
+              <Suspense fallback={<PageLoader />}>
+                <RevenueDetailedPage />
+              </Suspense>
+            ),
+            loader: revenueDetailedPageLoader,
+          },
+          {
+            path: 'expense-detailed',
+            element: (
+              <Suspense fallback={<PageLoader />}>
+                <ExpensesDetailedPage />
+              </Suspense>
+            ),
+            loader: expensesDetailedPageLoader,
+          },
+        ],
+        // element: (
+        //   <Suspense fallback={<PageLoader />}>
+        //     <IncomeStatementPage />
+        //   </Suspense>
+        // ),
       },
     ],
   },
