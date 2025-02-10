@@ -20,9 +20,10 @@ import {
 } from '@/components/ui/table';
 
 import { useSetParams } from '@/hooks/use-set-params';
-import { dateFormat, numberFormat } from '@/lib/formatters';
+import { dateFormat, fileSuffix, numberFormat } from '@/lib/formatters';
 import { fetchIncomeStatement } from '@/features/reports/api';
 import { cn } from '@/lib/utils';
+import usePdfConverter from '@/hooks/use-pdf';
 import type { IncomeStatement } from '@/features/reports/types/index.types';
 
 export default function IncomeStatementPage() {
@@ -88,6 +89,10 @@ function IncomeStatementTable({
   from: string;
   to: string;
 }) {
+  const { convertToPdf, isConverting } = usePdfConverter(
+    'print-document',
+    `income-statement_${fileSuffix()}`
+  );
   const revenueTotal = data.incomes.reduce(
     (acc, cur) => acc + Number(cur.amount),
     0
@@ -97,79 +102,86 @@ function IncomeStatementTable({
     0
   );
   const profitLoss = revenueTotal - expenseTotal;
+
+  // console.log(incomesOnly);
   return (
-    <Table className="w-full md:w-1/2 mx-auto">
-      <TableHeader className="bg-secondary">
-        <TableRow>
-          <TableHead colSpan={2}>Income Statement</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        <TableRow className="bg-emerald-200 dark:bg-emerald-800">
-          <TableCell colSpan={2}>Revenues</TableCell>
-        </TableRow>
-        {data.incomes.map(inc => (
-          <TableRow key={inc.account}>
-            <TableCell className="uppercase text-xs">{inc.account}</TableCell>
-            <TableCell className="text-right text-xs font-semibold">
-              <Link
-                to={`/reports/income-statement/revenue-detailed?account=${inc.id}&from=${from}&to=${to}`}
-                className="text-blue-400 dark:text-blue-700 transition-all hover:underline"
-                target="_blank"
-              >
-                {numberFormat(inc.amount)}
-              </Link>
+    <div className="max-w-2xl mx-auto y-spacing">
+      <Button variant="excel" onClick={convertToPdf} disabled={isConverting}>
+        Export To PDF
+      </Button>
+      <Table className="w-full m-6" id="print-document">
+        <TableHeader className="bg-secondary">
+          <TableRow>
+            <TableHead colSpan={2}>Income Statement</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow className="bg-emerald-200 dark:bg-emerald-800">
+            <TableCell colSpan={2}>Revenues</TableCell>
+          </TableRow>
+          {data.incomes.map(inc => (
+            <TableRow key={inc.account}>
+              <TableCell className="uppercase text-xs">{inc.account}</TableCell>
+              <TableCell className="text-right text-xs font-semibold">
+                <Link
+                  to={`/reports/income-statement/revenue-detailed?account=${inc.id}&from=${from}&to=${to}`}
+                  className="text-blue-400 dark:text-blue-700 transition-all hover:underline"
+                  target="_blank"
+                >
+                  {numberFormat(inc.amount)}
+                </Link>
+              </TableCell>
+            </TableRow>
+          ))}
+          <TableRow>
+            <TableCell className="font-semibold text-sm">
+              Revenues Total
+            </TableCell>
+            <TableCell className="text-right font-semibold text-sm">
+              {numberFormat(revenueTotal)}
             </TableCell>
           </TableRow>
-        ))}
-        <TableRow>
-          <TableCell className="font-semibold text-sm">
-            Revenues Total
-          </TableCell>
-          <TableCell className="text-right font-semibold text-sm">
-            {numberFormat(revenueTotal)}
-          </TableCell>
-        </TableRow>
-        <TableRow className="bg-rose-200 dark:bg-rose-800">
-          <TableCell colSpan={2}>Expenses</TableCell>
-        </TableRow>
-        {data.expenses.map(exp => (
-          <TableRow key={exp.parentAccount}>
-            <TableCell className="uppercase text-xs">
-              {exp.parentAccount}
+          <TableRow className="bg-rose-200 dark:bg-rose-800">
+            <TableCell colSpan={2}>Expenses</TableCell>
+          </TableRow>
+          {data.expenses.map(exp => (
+            <TableRow key={exp.parentAccount}>
+              <TableCell className="uppercase text-xs">
+                {exp.parentAccount}
+              </TableCell>
+              <TableCell className="text-right text-xs font-semibold">
+                <Link
+                  to={`/reports/income-statement/expense-detailed?account=${exp.parentAccount.toLowerCase()}&from=${from}&to=${to}`}
+                  className="text-blue-400 dark:text-blue-700 transition-all hover:underline"
+                >
+                  {numberFormat(exp.credit)}
+                </Link>
+              </TableCell>
+            </TableRow>
+          ))}
+          <TableRow>
+            <TableCell className="font-semibold text-sm">
+              Expenses Total
             </TableCell>
-            <TableCell className="text-right text-xs font-semibold">
-              <Link
-                to={`/reports/income-statement/expense-detailed?account=${exp.parentAccount.toLowerCase()}&from=${from}&to=${to}`}
-                className="text-blue-400 dark:text-blue-700 transition-all hover:underline"
-              >
-                {numberFormat(exp.credit)}
-              </Link>
+            <TableCell className="text-right font-semibold text-sm">
+              {numberFormat(expenseTotal)}
             </TableCell>
           </TableRow>
-        ))}
-        <TableRow>
-          <TableCell className="font-semibold text-sm">
-            Expenses Total
-          </TableCell>
-          <TableCell className="text-right font-semibold text-sm">
-            {numberFormat(expenseTotal)}
-          </TableCell>
-        </TableRow>
-      </TableBody>
-      <TableFooter className="bg-transparent border-b">
-        <TableRow>
-          <TableCell>Profit/Loss</TableCell>
-          <TableCell
-            className={cn(
-              'text-right',
-              profitLoss < 0 ? 'text-rose-500' : 'text-emerald-500'
-            )}
-          >
-            {numberFormat(profitLoss)}
-          </TableCell>
-        </TableRow>
-      </TableFooter>
-    </Table>
+        </TableBody>
+        <TableFooter className="bg-transparent border-b">
+          <TableRow>
+            <TableCell>Profit/Loss</TableCell>
+            <TableCell
+              className={cn(
+                'text-right',
+                profitLoss < 0 ? 'text-rose-500' : 'text-emerald-500'
+              )}
+            >
+              {numberFormat(profitLoss)}
+            </TableCell>
+          </TableRow>
+        </TableFooter>
+      </Table>
+    </div>
   );
 }
