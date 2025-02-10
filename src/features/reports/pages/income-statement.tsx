@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { type DateRange } from 'react-day-picker';
 
 import ContentWrapper from '@/components/layout/content-wrapper';
@@ -9,11 +9,6 @@ import CustomFormMessage from '@/components/ui/custom-form-message';
 import DateRangePicker from '@/components/ui/daterange';
 import { TableSkeleton } from '@/components/ui/table-skeleton';
 import { ErrorAlert } from '@/components/ui/custom-alert';
-
-import { useSetParams } from '@/hooks/use-set-params';
-import { dateFormat, numberFormat } from '@/lib/formatters';
-import { fetchIncomeStatement } from '@/features/reports/api';
-import type { IncomeStatement } from '@/features/reports/types/index.types';
 import {
   Table,
   TableBody,
@@ -23,7 +18,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+
+import { useSetParams } from '@/hooks/use-set-params';
+import { dateFormat, numberFormat } from '@/lib/formatters';
+import { fetchIncomeStatement } from '@/features/reports/api';
 import { cn } from '@/lib/utils';
+import type { IncomeStatement } from '@/features/reports/types/index.types';
 
 export default function IncomeStatementPage() {
   const [searchParams] = useSearchParams();
@@ -41,8 +41,6 @@ export default function IncomeStatementPage() {
       fetchIncomeStatement({ from: dateFormat(from!), to: dateFormat(to!) }),
     enabled: paramsSet,
   });
-
-  console.log(data);
 
   function handleClick() {
     setSubmitted(true);
@@ -70,16 +68,28 @@ export default function IncomeStatementPage() {
           (isLoading ? (
             <TableSkeleton rowCount={10} columnWidths={['w-36', 'w-32']} />
           ) : data ? (
-            <IncomeStatementTable data={data} />
+            <IncomeStatementTable
+              data={data}
+              from={dateFormat(from)}
+              to={dateFormat(to)}
+            />
           ) : null)}
       </div>
     </ContentWrapper>
   );
 }
 
-function IncomeStatementTable({ data }: { data: IncomeStatement }) {
+function IncomeStatementTable({
+  data,
+  from,
+  to,
+}: {
+  data: IncomeStatement;
+  from: string;
+  to: string;
+}) {
   const revenueTotal = data.incomes.reduce(
-    (acc, cur) => acc + Number(cur.credit),
+    (acc, cur) => acc + Number(cur.amount),
     0
   );
   const expenseTotal = data.expenses.reduce(
@@ -99,12 +109,16 @@ function IncomeStatementTable({ data }: { data: IncomeStatement }) {
           <TableCell colSpan={2}>Revenues</TableCell>
         </TableRow>
         {data.incomes.map(inc => (
-          <TableRow key={inc.parentAccount}>
-            <TableCell className="uppercase text-xs">
-              {inc.parentAccount}
-            </TableCell>
+          <TableRow key={inc.account}>
+            <TableCell className="uppercase text-xs">{inc.account}</TableCell>
             <TableCell className="text-right text-xs font-semibold">
-              {numberFormat(inc.credit)}
+              <Link
+                to={`/reports/income-statement/revenue-detailed?account=${inc.id}&from=${from}&to=${to}`}
+                className="text-blue-400 dark:text-blue-700 transition-all hover:underline"
+                target="_blank"
+              >
+                {numberFormat(inc.amount)}
+              </Link>
             </TableCell>
           </TableRow>
         ))}
@@ -125,7 +139,12 @@ function IncomeStatementTable({ data }: { data: IncomeStatement }) {
               {exp.parentAccount}
             </TableCell>
             <TableCell className="text-right text-xs font-semibold">
-              {numberFormat(exp.credit)}
+              <Link
+                to={`/reports/income-statement/expense-detailed?account=${exp.parentAccount.toLowerCase()}&from=${from}&to=${to}`}
+                className="text-blue-400 dark:text-blue-700 transition-all hover:underline"
+              >
+                {numberFormat(exp.credit)}
+              </Link>
             </TableCell>
           </TableRow>
         ))}
